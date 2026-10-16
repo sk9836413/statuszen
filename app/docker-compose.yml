@@ -1,0 +1,28 @@
+# Statuszen with MySQL. Start with: docker compose up -d
+# Then open http://localhost:3000 and choose MySQL in the installer:
+#   host: db   port: 3306   database: statuszen   user: statuszen   password: statuszen
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - storage:/app/storage
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: statuszen
+      MYSQL_USER: statuszen
+      MYSQL_PASSWORD: statuszen
+      MYSQL_ROOT_PASSWORD: change-me
+    volumes:
+      - mysql:/var/lib/mysql
+
+volumes:
+  storage:
+  mysql:
