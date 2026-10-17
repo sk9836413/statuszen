@@ -5,6 +5,7 @@ import { ThemeScript, type ThemeChoice } from "@/components/site/theme";
 import { requireAdmin } from "@/lib/auth/session";
 import { isDemoMode } from "@/lib/config";
 import { getDb } from "@/lib/db";
+import { maybeLazyTick } from "@/lib/lazy-tick";
 import { getSettings } from "@/lib/settings";
 import { uploadUrl } from "@/lib/site";
 import { AdminShell } from "./shell";
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const user = await requireAdmin();
+  maybeLazyTick();
   const settings = await getSettings();
   const db = await getDb();
   const [unread, pendingPayments] = await Promise.all([

@@ -150,8 +150,11 @@ export async function resolvePublic(hostname: string): Promise<Array<{ address: 
   return addresses;
 }
 
-/** DNS lookup used by the HTTP agent: refuses to connect to private addresses. */
-function guardedLookup(
+/**
+ * DNS lookup used by the HTTP agent: refuses to connect to private addresses.
+ * Also usable as the `lookup` option of net.connect / tls.connect (monitor checks).
+ */
+export function guardedLookup(
   hostname: string,
   options: dns.LookupOptions,
   callback: (err: NodeJS.ErrnoException | null, address: string | dns.LookupAddress[], family?: number) => void,
@@ -237,24 +240,55 @@ export async function fetchOnce(
   return { url: url.toString(), status: res.status, statusText: res.statusText, headers, ...read, timeMs: Date.now() - started };
 }
 
+/** Agent without the private-address guard, only for installs that enable "allow private targets". */
+const openAgent = new Agent({ connect: { timeout: 8_000 }, headersTimeout: 10_000, bodyTimeout: 10_000 });
+
+/** Like parsePublicUrl, but any port 1-65535 is accepted (alert webhooks such as n8n on :5678). */
+function parseWebhookUrl(input: string, allowPrivate: boolean): URL {
+  let url: URL;
+  try {
+    url = new URL(input.trim());
+  } catch {
+    throw new ToolInputError("That doesn't look like a valid URL.");
+  }
+  if (url.protocol !== "http:" && url.protocol !== "https:") throw new ToolInputError("Only http:// and https:// URLs can be used.");
+  if (url.username || url.password) throw new ToolInputError("URLs with a username or password are not allowed.");
+  if (allowPrivate) return url;
+  const host = url.hostname.replace(/^\[|\]$/g, "");
+  if (net.isIP(host)) {
+    if (isPrivateAddress(host)) throw new ToolInputError("Private and local addresses can't be used.");
+  } else if (host === "localhost" || host.endsWith(".localhost") || host.endsWith(".local") || host.endsWith(".internal")) {
+    throw new ToolInputError("Private and local addresses can't be used.");
+  }
+  return url;
+}
+
 /**
  * POST a JSON body to a user-supplied URL (outgoing webhooks). Same guards as
  * fetchOnce: public addresses and standard ports only, redirects are not
  * followed, and the response body is discarded. Returns the HTTP status.
  * Throws ToolInputError for invalid or private URLs and network failures.
+ *
+ * `anyPort` accepts every port (the address is still checked when connecting);
+ * `allowPrivate` skips the private-address guard (Admin → allow private targets).
  */
 export async function postJson(
   input: string,
   body: string,
-  { timeoutMs = 5_000, headers = {} }: { timeoutMs?: number; headers?: Record<string, string> } = {},
+  {
+    timeoutMs = 5_000,
+    headers = {},
+    anyPort = false,
+    allowPrivate = false,
+  }: { timeoutMs?: number; headers?: Record<string, string>; anyPort?: boolean; allowPrivate?: boolean } = {},
 ): Promise<number> {
-  const url = parsePublicUrl(input);
+  const url = anyPort || allowPrivate ? parseWebhookUrl(input, allowPrivate) : parsePublicUrl(input);
   let res: Awaited<ReturnType<typeof undiciFetch>>;
   try {
     res = await undiciFetch(url, {
       method: "POST",
       redirect: "manual",
-      dispatcher: agent,
+      dispatcher: allowPrivate ? openAgent : agent,
       headers: { "User-Agent": "Statuszen-Webhook/1.0", "Content-Type": "application/json", ...headers },
       body,
       signal: AbortSignal.timeout(timeoutMs),

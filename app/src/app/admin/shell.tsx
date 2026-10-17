@@ -4,12 +4,12 @@ import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Activity,
   PanelsTopLeft,
   CreditCard,
   ExternalLink,
   FileText,
   Gauge,
-  Globe,
   Inbox,
   Languages,
   Layers,
@@ -29,7 +29,7 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: Gauge, exact: true },
   { href: "/admin/users", label: "Users", icon: Users },
-  { href: "/admin/sites", label: "Websites", icon: Globe },
+  { href: "/admin/monitors", label: "Monitors", icon: Activity },
   { href: "/admin/plans", label: "Plans", icon: Layers },
   { href: "/admin/payments", label: "Payments", icon: CreditCard, badge: "payments" as const },
   { href: "/admin/pages", label: "Pages", icon: FileText },

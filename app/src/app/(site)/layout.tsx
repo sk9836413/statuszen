@@ -10,6 +10,7 @@ import { ThemeScript, type ThemeChoice } from "@/components/site/theme";
 import { fillPlaceholders } from "@/lib/settings";
 import { I18nProvider } from "@/lib/i18n/client";
 import { getClientMessages, getT, localSetting } from "@/lib/i18n/server";
+import { maybeLazyTick } from "@/lib/lazy-tick";
 import { absoluteUrl, getSiteContext, uploadUrl } from "@/lib/site";
 
 // Every page reads settings from the database at request time.
@@ -47,6 +48,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function SiteLayout({ children }: { children: ReactNode }) {
   const { settings, user, locale } = await getSiteContext();
+  maybeLazyTick();
   const t = await getT();
   const langScript = `document.documentElement.lang=${JSON.stringify(locale.code)};document.documentElement.dir=${JSON.stringify(locale.dir)};`;
 

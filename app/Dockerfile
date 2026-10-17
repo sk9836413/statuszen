@@ -22,6 +22,7 @@ RUN addgroup -S statuszen && adduser -S statuszen -G statuszen
 COPY --from=build --chown=statuszen:statuszen /app/.next ./.next
 COPY --from=build --chown=statuszen:statuszen /app/node_modules ./node_modules
 COPY --from=build --chown=statuszen:statuszen /app/public ./public
+COPY --from=build --chown=statuszen:statuszen /app/scripts ./scripts
 COPY --from=build --chown=statuszen:statuszen /app/package.json /app/server.js /app/next.config.ts ./
 RUN mkdir -p storage && chown statuszen:statuszen storage
 USER statuszen

@@ -1,6 +1,7 @@
 import "server-only";
 import type { Insertable, Kysely } from "kysely";
 import type { Database, PaymentsTable } from "./schema";
+import { seedDemoMonitors } from "./demo-monitors";
 
 /**
  * Sample users, payments and messages so a public demo's admin
@@ -115,6 +116,16 @@ export async function seedDemoData(db: Kysely<Database>): Promise<void> {
     }
     payments.sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)));
     await trx.insertInto("payments").values(payments).execute();
+
+    const admin = await trx.selectFrom("users").select("id").where("role", "=", "admin").orderBy("id").executeTakeFirst();
+    if (admin) {
+      const siteUrl = (await trx.selectFrom("settings").select("value").where("key", "=", "site_url").executeTakeFirst())?.value || process.env.SITE_URL || "";
+      const slug = await seedDemoMonitors(trx, { adminId: admin.id, siteUrl, rand });
+      // Show the sample status page on the platform's own home page.
+      const existing = await trx.selectFrom("settings").select("key").where("key", "=", "showcase_status_slug").executeTakeFirst();
+      if (existing) await trx.updateTable("settings").set({ value: slug }).where("key", "=", "showcase_status_slug").execute();
+      else await trx.insertInto("settings").values({ key: "showcase_status_slug", value: slug }).execute();
+    }
 
     await trx
       .insertInto("contact_messages")

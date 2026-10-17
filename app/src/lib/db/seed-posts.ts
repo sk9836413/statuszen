@@ -1,94 +1,87 @@
 /** Starter blog posts created on install (Admin → Blog). Markdown. */
 export const DEFAULT_POSTS = [
   {
-    slug: "what-is-social-proof",
-    title: "What is social proof and why does it increase conversions?",
-    excerpt: "Visitors trust other people more than they trust your copy. Here is how social proof works and where to use it on your website.",
-    metaDescription: "Learn what social proof is, the main types of social proof and how to use it on your website to increase conversions.",
-    content: `## People follow people
+    slug: "what-is-uptime-monitoring",
+    title: "What is uptime monitoring and why every website needs it",
+    excerpt: "Your customers notice downtime before you do — unless something is watching for you. Here is how uptime monitoring works.",
+    metaDescription: "Learn how uptime monitoring works, which checks you need for websites, APIs and servers, and how to avoid false alarms.",
+    content: `## The problem
 
-When we are unsure what to do, we look at what others are doing. That is social proof, and it is one of the strongest forces in buying decisions.
+Websites go down for many reasons: an expired certificate, a full disk, a broken deploy, a DNS change. Without monitoring, you usually hear about it from an angry customer.
 
-On a website it answers the silent questions every new visitor has: *Is this legit? Do other people actually buy this? Will it work for someone like me?*
+## How uptime monitoring works
 
-## The main types
+A monitoring service requests your website or API from the outside at a fixed interval — for example every minute — and checks the answer:
 
-- **Activity** – "Anna from Berlin bought the Pro plan 5 minutes ago."
-- **Popularity** – "1,284 people signed up this week."
-- **Live presence** – "23 people are viewing this page right now."
-- **Reviews and testimonials** – real words from real customers, with a name and a face.
+- **Status code**: did the server answer with 200 OK?
+- **Content**: does the page still contain the text you expect?
+- **Speed**: did it answer fast enough?
 
-## Where to use it
+When a check fails, it is repeated to confirm the problem. Only then are you alerted, so a single network blip doesn't wake you up.
 
-1. **Pricing page** – the moment of doubt. Recent purchases and testimonials work best here.
-2. **Product pages** – live visitors and review popups.
-3. **Signup forms** – a counter of recent signups lowers the perceived risk.
-4. **Checkout** – a short testimonial next to the payment button.
+## Which checks you need
 
-## Keep it honest
+1. **HTTP checks** for your website and API endpoints.
+2. **Keyword checks** for pages that can return "200 OK" while showing an error.
+3. **SSL and domain expiry** so nothing expires by surprise.
+4. **Heartbeat checks** for cron jobs and backups that run in the background.
 
-Only show real events. Fake numbers are easy to spot, can break consumer-protection laws and destroy the trust you are trying to build. Connect your store, your forms or your payment provider and let the data speak.`,
+## Tell your customers
+
+A public status page shows what's working and what isn't. It reduces support tickets during an incident and builds trust the rest of the time.`,
   },
   {
-    slug: "collect-testimonials-that-sell",
-    title: "How to collect testimonials that actually sell",
-    excerpt: "Most testimonials say \"Great product!\" and convince nobody. Ask better questions and you will get stories that sell for you.",
-    metaDescription: "A simple process to collect specific, believable customer testimonials and show them where they convert best.",
-    content: `## Ask at the right moment
+    slug: "monitor-cron-jobs-with-heartbeats",
+    title: "How to monitor cron jobs and backups with heartbeats",
+    excerpt: "A failed backup is silent until you need it. Heartbeat monitoring tells you the moment a scheduled job stops running.",
+    metaDescription: "Use heartbeat (dead man's switch) monitoring to get alerted when cron jobs, backups and scheduled tasks stop running.",
+    content: `## Silent failures
 
-The best time to ask is right after a success: a delivered order, a finished project, a solved support ticket. Send a short message with a link to your testimonial page.
+Cron jobs, backups and queue workers don't have a URL you can check. When they stop, nothing happens — until you discover a week of missing backups.
 
-## Ask better questions
+## The heartbeat pattern
 
-Instead of "Can you leave a review?", ask:
+Give each job a unique ping URL. At the end of every successful run, the job calls that URL:
 
-- What problem were you trying to solve?
-- What almost stopped you from buying?
-- What changed after you started using it?
+\`\`\`bash
+0 3 * * * /usr/local/bin/backup.sh && curl -fsS https://status.example.com/api/ping/YOUR_TOKEN
+\`\`\`
 
-Answers to these questions turn into specific, believable stories.
+If the ping doesn't arrive within the expected interval plus a grace period, you get an alert.
 
-## Make it effortless
+## Report failures and duration
 
-Use a short form: star rating, a few sentences, name and (optionally) a photo. No account, no long survey.
+- Call \`/start\` when the job begins and the normal URL when it ends to measure how long it takes.
+- Call \`/fail\` from your error handler to be alerted immediately.
 
-## Approve and show them
+## Good practices
 
-Review new testimonials before they go live, then show them:
-
-- as rotating review popups on product and pricing pages;
-- on a testimonial wall on your homepage;
-- next to your signup and checkout buttons.
-
-## Say thank you
-
-Reply to every customer who took the time to write. It builds loyalty and often leads to the next sale.`,
+- Set the grace period a little longer than the job's normal run time.
+- Use one heartbeat per job, so the alert tells you exactly what broke.
+- Add heartbeats to your status page only for jobs customers care about.`,
   },
   {
-    slug: "urgency-without-being-pushy",
-    title: "Coupons, countdowns and urgency without being pushy",
-    excerpt: "Urgency works when it is real. How to use coupons, countdown bars and announcement bars in a way your visitors appreciate.",
-    metaDescription: "Use coupons, countdown timers and announcement bars to create genuine urgency and grow sales without annoying visitors.",
-    content: `## Real deadlines only
+    slug: "incident-communication-status-page",
+    title: "Incident communication: what to post on your status page",
+    excerpt: "Clear, timely updates turn an outage into a moment of trust. A simple template for every stage of an incident.",
+    metaDescription: "A practical guide to writing status page updates during an incident: investigating, identified, monitoring and resolved.",
+    content: `## Post early
 
-A countdown that resets every time the page loads is a trick visitors recognise. Use countdowns for real events: a launch discount, a seasonal sale, free shipping until Friday.
+The first update matters most. As soon as you know something is wrong, post that you are **investigating**. Customers don't need the cause yet — they need to know you are on it.
 
-## Make the offer obvious
+## A simple template
 
-An announcement bar at the top of the page is perfect for one short message and one button. Keep the text under ten words.
+1. **Investigating** – "We're seeing errors on checkout and are looking into it."
+2. **Identified** – "The cause is a failed database update. We're rolling it back."
+3. **Monitoring** – "A fix is in place. We're watching to make sure it holds."
+4. **Resolved** – "Everything is working normally. We're sorry for the trouble."
 
-## Coupons that feel like a gift
+## Keep a rhythm
 
-Show a coupon to first-time visitors after they have read a little of the page, not the moment they arrive. A "Copy code" button makes it easy to use.
+Update every 30 minutes during a major outage, even if nothing changed. Silence feels worse than "still working on it".
 
-## Respect the visitor
+## Plan maintenance
 
-- Show each offer once per session or once per day.
-- Make every popup easy to close.
-- Don't stack several popups at the same time.
-
-## Measure
-
-Track views, clicks and conversions for every widget, and remove the ones that don't help. Small, honest nudges beat loud ones.`,
+Announce planned maintenance a few days ahead, with the start and end time in your customers' time zone, and let subscribers get an email.`,
   },
 ];

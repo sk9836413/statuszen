@@ -1,0 +1,172 @@
+/* Statuszen status widget (rendered inside a Shadow DOM, see index.ts). */
+
+.w {
+  --bg: #ffffff;
+  --fg: #0f172a;
+  --mu: #64748b;
+  --bd: rgba(15, 23, 42, 0.1);
+  --sh: 0 8px 24px -8px rgba(15, 23, 42, 0.28), 0 1px 2px rgba(15, 23, 42, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  font: 500 13px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+}
+.r {
+  align-items: flex-end;
+}
+.dark {
+  --bg: #141b25;
+  --fg: #e7ecf3;
+  --mu: #98a3b4;
+  --bd: rgba(255, 255, 255, 0.12);
+  --sh: 0 8px 24px -8px rgba(0, 0, 0, 0.6);
+}
+@media (prefers-color-scheme: dark) {
+  .auto {
+    --bg: #141b25;
+    --fg: #e7ecf3;
+    --mu: #98a3b4;
+    --bd: rgba(255, 255, 255, 0.12);
+    --sh: 0 8px 24px -8px rgba(0, 0, 0, 0.6);
+  }
+}
+
+.s-operational {
+  --c: #22c55e;
+  --cs: rgba(34, 197, 94, 0.22);
+}
+.s-degraded {
+  --c: #f59e0b;
+  --cs: rgba(245, 158, 11, 0.25);
+}
+.s-partial_outage {
+  --c: #f97316;
+  --cs: rgba(249, 115, 22, 0.25);
+}
+.s-major_outage {
+  --c: #ef4444;
+  --cs: rgba(239, 68, 68, 0.25);
+}
+.s-maintenance {
+  --c: #3b82f6;
+  --cs: rgba(59, 130, 246, 0.25);
+}
+
+.p {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100vw - 32px);
+  padding: 8px 14px 8px 12px;
+  border: 1px solid var(--bd);
+  border-radius: 999px;
+  background: var(--bg);
+  box-shadow: var(--sh);
+  color: var(--fg);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.p span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.p:hover {
+  transform: translateY(-1px);
+}
+.p:focus-visible,
+.v:focus-visible,
+.x:focus-visible {
+  outline: 2px solid var(--c, #3b82f6);
+  outline-offset: 2px;
+}
+
+.d {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c, #94a3b8);
+  box-shadow: 0 0 0 3px var(--cs, transparent);
+}
+.p:not(.s-operational) .d,
+.b .d {
+  animation: sz-pulse 1.8s ease-in-out infinite;
+}
+@keyframes sz-pulse {
+  50% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+}
+
+.b {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 300px;
+  max-width: calc(100vw - 32px);
+  box-sizing: border-box;
+  padding: 12px 34px 12px 14px;
+  border: 1px solid var(--bd);
+  border-radius: 14px;
+  background: var(--bg);
+  box-shadow: var(--sh);
+}
+.b .d {
+  margin-top: 5px;
+}
+.bb {
+  min-width: 0;
+}
+.bb strong {
+  display: block;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+.h {
+  display: block;
+  margin-top: 2px;
+  color: var(--mu);
+  font-size: 12px;
+}
+.v {
+  display: inline-block;
+  margin-top: 6px;
+  color: var(--c);
+  font-weight: 600;
+  text-decoration: none;
+}
+.v:hover {
+  text-decoration: underline;
+}
+.x {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--mu);
+  font: 18px/1 system-ui, sans-serif;
+  cursor: pointer;
+}
+.x:hover {
+  background: var(--bd);
+  color: var(--fg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .d {
+    animation: none !important;
+  }
+  .p {
+    transition: none;
+  }
+}

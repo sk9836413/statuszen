@@ -9,6 +9,7 @@
     "build": "next build",
     "start": "next start",
     "start:server": "node server.js",
+    "worker": "node scripts/worker.mjs",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "widget:build": "node scripts/build-widget.mjs"

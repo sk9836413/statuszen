@@ -1,16 +1,30 @@
 # Statuszen with MySQL. Start with: docker compose up -d
 # Then open http://localhost:3000 and choose MySQL in the installer:
 #   host: db   port: 3306   database: statuszen   user: statuszen   password: statuszen
+# Set CRON_SECRET (e.g. in a .env file next to this file) to a long random string:
+# the worker uses it to run checks every 15 seconds.
 services:
   app:
     build: .
     restart: unless-stopped
     ports:
       - "3000:3000"
+    environment:
+      CRON_SECRET: ${CRON_SECRET:-change-me-to-a-long-random-string}
     volumes:
       - storage:/app/storage
     depends_on:
       - db
+
+  worker:
+    build: .
+    restart: unless-stopped
+    command: ["node", "scripts/worker.mjs"]
+    environment:
+      WORKER_URL: http://app:3000
+      CRON_SECRET: ${CRON_SECRET:-change-me-to-a-long-random-string}
+    depends_on:
+      - app
 
   db:
     image: mysql:8.4
