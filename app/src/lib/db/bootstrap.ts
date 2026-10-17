@@ -2,6 +2,7 @@ import "server-only";
 import type { Kysely } from "kysely";
 import { hashPassword, verifyPassword } from "../auth/password";
 import { isDemoMode } from "../config";
+import { seedDemoLanguages } from "./demo-languages";
 import { seedDemoData } from "./demo-seed";
 import type { Database } from "./schema";
 
@@ -17,6 +18,7 @@ export async function bootstrapFromEnv(db: Kysely<Database>): Promise<void> {
   await ensureAdminFromEnv(db);
   if (process.env.DEMO_SEED === "true") {
     await seedDemoData(db);
+    await seedDemoLanguages(db);
   }
 }
 
