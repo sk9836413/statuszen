@@ -1,0 +1,47 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  @font-face { font-family: "Bricolage"; src: url("../../app/src/fonts/bricolage-grotesque.woff2") format("woff2"); font-weight: 200 800; }
+  @font-face { font-family: "Instrument"; src: url("../../app/src/fonts/instrument-sans.woff2") format("woff2"); font-weight: 400 700; }
+  html, body { margin: 0; width: 590px; height: 300px; overflow: hidden; }
+  body {
+    position: relative; font-family: "Instrument", sans-serif; color: #fff;
+    background-color: #1748b4;
+    background-image:
+      radial-gradient(340px 240px at 100% 0%, rgba(34, 197, 94, .3), transparent 65%),
+      radial-gradient(320px 260px at 0% 100%, rgba(110, 160, 255, .5), transparent 65%),
+      linear-gradient(rgba(255,255,255,.065) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.065) 1px, transparent 1px),
+      linear-gradient(135deg, #1d5bd8, #123b94);
+    background-size: auto, auto, 18px 18px, 18px 18px, auto;
+  }
+  .left { position: absolute; left: 26px; top: 26px; width: 236px; }
+  .brand { display: flex; align-items: center; gap: 9px; font-family: "Bricolage"; font-weight: 800; font-size: 25px; letter-spacing: -.02em; }
+  .brand svg { width: 34px; height: 34px; filter: drop-shadow(0 4px 10px rgba(0,0,0,.25)); }
+  h1 { font-family: "Bricolage"; font-size: 25px; line-height: 1.06; margin: 16px 0 9px; letter-spacing: -.02em; font-weight: 800; }
+  h1 em { font-style: normal; color: #4ade80; }
+  p { margin: 0; font-size: 11.5px; line-height: 1.45; color: rgba(255,255,255,.88); }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 12px; }
+  .chips span { font-size: 9.5px; font-weight: 600; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.24); padding: 2px 7px; border-radius: 999px; white-space: nowrap; }
+  .stack { position: absolute; left: 278px; top: 30px; width: 300px; height: 260px; }
+  .desktop { position: absolute; left: 0; top: 0; width: 300px; border-radius: 8px; overflow: hidden; box-shadow: 0 16px 36px rgba(6, 20, 60, .45); background: #fff; }
+  .desktop .bar { height: 12px; background: #eef1f7; display: flex; gap: 3.5px; align-items: center; padding-left: 6px; }
+  .desktop .bar i { width: 4.5px; height: 4.5px; border-radius: 50%; background: #cdd3df; }
+  .desktop .shot { display: block; width: 100%; }
+  .phone { position: absolute; left: 204px; top: 68px; width: 86px; height: 182px; border-radius: 15px; overflow: hidden; border: 3.5px solid #111827; background: #fff; box-shadow: 0 14px 30px rgba(6, 20, 60, .5); }
+  .phone img { display: block; width: 100%; }
+</style></head>
+<body>
+  <div class="left">
+    <div class="brand">
+      <svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#fff"/><path d="M5 17.5h5.2l2.6-6.5 4.2 11.5 3.1-8.2 1.9 3.2H27" fill="none" stroke="#1d5bd8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="25" cy="8" r="3.4" fill="#22c55e" stroke="#fff" stroke-width="1.6"/></svg>
+      Statuszen
+    </div>
+    <h1>Uptime monitoring &amp; status page <em>SaaS</em></h1>
+    <p>7 monitor types, cron job monitoring, 6 alert channels, public status pages and paid plans with a full admin panel.</p>
+    <div class="chips"><span>Next.js 16</span><span>React 19</span><span>MySQL / SQLite</span><span>Stripe · PayPal · Razorpay</span><span>RTL</span></div>
+  </div>
+  <div class="stack">
+    <div class="desktop"><div class="bar"><i></i><i></i><i></i></div><img class="shot" src="../raw/d01-overview.png"></div>
+    <div class="phone"><img src="../raw/m1-status.png"></div>
+  </div>
+</body></html>

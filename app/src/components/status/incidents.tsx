@@ -34,7 +34,7 @@ function affects(incident: PublicIncident, names: Map<number, string>, t: Transl
 
 /** Message text from the incident's author: plain text, line breaks kept. */
 export function Message({ text, className }: { text: string; className?: string }) {
-  return <p className={cn("break-words whitespace-pre-line", className)}>{text}</p>;
+  return <p dir="auto" className={cn("break-words whitespace-pre-line", className)}>{text}</p>;
 }
 
 /** Card for an open incident or a maintenance window, with its latest updates. */
@@ -69,7 +69,7 @@ export function IncidentCard({
             {maintenance ? t(upcoming ? "status.maintenanceUpcoming" : "status.maintenanceNow") : t(`status.impact.${incident.impact}`)}
           </p>
           <h3 className="mt-0.5 font-display text-lg leading-snug font-semibold text-ink">
-            <Link href={href} className="hover:underline hover:underline-offset-4">
+            <Link href={href} dir="auto" className="hover:underline hover:underline-offset-4">
               {incident.title}
             </Link>
           </h3>
@@ -95,7 +95,7 @@ export function IncidentCard({
               <p className="text-sm leading-relaxed text-ink">
                 <strong className="font-semibold">{t(`status.incident.${u.status}`)}</strong>
                 <span className="text-muted"> — </span>
-                <span className="break-words whitespace-pre-line">{u.message}</span>
+                <span dir="auto" className="break-words whitespace-pre-line">{u.message}</span>
               </p>
               <p className="mt-1 text-xs text-muted">
                 <Time iso={u.createdAt} locale={locale} />
@@ -130,7 +130,7 @@ export function IncidentRow({ incident, href, t, locale }: { incident: PublicInc
         <span aria-hidden className={cn("mt-[0.55rem] size-2 shrink-0 rounded-full", resolved ? "bg-slate-300 dark:bg-slate-600" : tone.solid)} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <Link href={href} className={cn("font-semibold leading-snug hover:underline hover:underline-offset-4", resolved ? "text-ink" : tone.text)}>
+            <Link href={href} dir="auto" className={cn("font-semibold leading-snug hover:underline hover:underline-offset-4", resolved ? "text-ink" : tone.text)}>
               {incident.title}
             </Link>
             <StatusChip incident={incident} t={t} />

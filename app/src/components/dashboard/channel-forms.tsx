@@ -153,7 +153,7 @@ export function ChannelForm({ values }: { values: ChannelFormValues }) {
             {steps.map((key, i) => (
               <li key={key} className="flex gap-2.5">
                 <span className="grid size-5 shrink-0 place-items-center rounded-full bg-primary-soft text-[11px] font-semibold text-primary">{i + 1}</span>
-                <span>{t(key)}</span>
+                <span className="min-w-0 [overflow-wrap:anywhere]">{t(key)}</span>
               </li>
             ))}
           </ol>

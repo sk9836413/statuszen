@@ -24,7 +24,7 @@ import { logout } from "@/app/actions/auth";
 import { Logo } from "@/components/site/logo";
 import { ThemeToggle, type ThemeChoice } from "@/components/site/theme";
 import { useT } from "@/lib/i18n/client";
-import type { MessageKey } from "@/lib/i18n/messages";
+import { plural, type MessageKey } from "@/lib/i18n/messages";
 import { cn } from "@/lib/utils";
 
 export interface ShellBanner {
@@ -111,7 +111,7 @@ export function DashboardShell({
                       item.count === "down" ? "bg-red-600 text-white" : "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
                     )}
                   >
-                    <span className="sr-only">{item.count === "down" ? t("dash.nav.downCount", { n: count }) : t("dash.nav.openCount", { n: count })}</span>
+                    <span className="sr-only">{item.count === "down" ? plural(t, "dash.nav.downCount", count) : plural(t, "dash.nav.openCount", count)}</span>
                     <span aria-hidden>{count}</span>
                   </span>
                 ) : null}

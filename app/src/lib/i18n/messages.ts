@@ -293,8 +293,10 @@ export const MESSAGES = {
   "dash.nav.account": "Account",
   "dash.nav.pricing": "Plans & pricing",
   "dash.nav.upgrade": "Upgrade plan",
-  "dash.nav.downCount": "{n} monitors down",
-  "dash.nav.openCount": "{n} open incidents",
+  "dash.nav.downCountOne": "{n} monitor down",
+  "dash.nav.downCountOther": "{n} monitors down",
+  "dash.nav.openCountOne": "{n} open incident",
+  "dash.nav.openCountOther": "{n} open incidents",
   "dash.banner.cta": "See plans",
   "dash.banner.overLimit": "Your account is over its plan limits. Monitors above your limit are not checked until you upgrade or remove some.",
   "dash.banner.monitorsReached": "You've reached your plan's limit of {limit} monitors.",
@@ -361,10 +363,12 @@ export const MESSAGES = {
   "dash.overview.subtitle": "Welcome back, {name}. Here's how your services are doing.",
   "dash.overview.allUp": "All systems operational",
   "dash.overview.allUpText": "All {n} active monitors passed their latest checks.",
-  "dash.overview.downTitle": "{n} monitor(s) down",
+  "dash.overview.downTitleOne": "{n} monitor down",
+  "dash.overview.downTitleOther": "{n} monitors down",
   "dash.overview.downText": "Alerts have been sent to the monitors' alert channels.",
   "dash.overview.waiting": "Waiting for the first checks",
-  "dash.overview.pending": "{n} monitor(s) waiting for their first check or in maintenance.",
+  "dash.overview.pendingOne": "{n} monitor is waiting for its first check or in maintenance.",
+  "dash.overview.pendingOther": "{n} monitors are waiting for their first check or in maintenance.",
   "dash.overview.viewAll": "View all",
   "dash.overview.more": "Show {n} more monitors",
   "dash.overview.openIncidents": "Open incidents",
@@ -405,7 +409,8 @@ export const MESSAGES = {
   "dash.monitors.select": "Select {name}",
   "dash.monitors.selectAll": "Select all",
   "dash.monitors.selected": "{n} selected",
-  "dash.monitors.bulkDone": "{n} monitor(s) updated.",
+  "dash.monitors.bulkDoneOne": "{n} monitor updated.",
+  "dash.monitors.bulkDoneOther": "{n} monitors updated.",
   "dash.monitors.noMatch": "No monitors match your filters",
   "dash.monitors.clearFilters": "Clear filters",
   "dash.monitors.uptime24": "24 h uptime",
@@ -540,7 +545,8 @@ export const MESSAGES = {
   "dash.detail.uptime90d": "Uptime (90 days)",
   "dash.detail.sslExpiry": "SSL certificate",
   "dash.detail.domainExpiry": "Domain registration",
-  "dash.detail.daysLeft": "{n} days left",
+  "dash.detail.daysLeftOne": "{n} day left",
+  "dash.detail.daysLeftOther": "{n} days left",
   "dash.detail.expired": "Expired",
   "dash.detail.expiryUnknown": "Not known yet",
   "dash.detail.responseChart": "Response time",
@@ -560,7 +566,8 @@ export const MESSAGES = {
   "dash.detail.tipFailures": "{n} of {total} checks failed",
   "dash.detail.tipUptime": "Uptime: {uptime}",
   "dash.detail.tipDowntime": "Down for {time}",
-  "dash.detail.tipIncidents": "{n} incident(s)",
+  "dash.detail.tipIncidentsOne": "{n} incident",
+  "dash.detail.tipIncidentsOther": "{n} incidents",
   "dash.detail.history": "Uptime history (90 days)",
   "dash.detail.historyText": "One bar per day (UTC). Hover a bar for details.",
   "dash.detail.incidents": "Incidents",
@@ -829,7 +836,8 @@ export const MESSAGES = {
   "dash.channels.disable": "Turn off",
   "dash.channels.delete": "Delete channel",
   "dash.channels.deleteConfirm": "Delete the alert channel “{name}”? Monitors using it stop sending alerts there.",
-  "dash.channels.usedBy": "Used by {n} monitor(s): {names}",
+  "dash.channels.usedByOne": "Used by {n} monitor: {names}",
+  "dash.channels.usedByOther": "Used by {n} monitors: {names}",
   "dash.channels.unused": "Not used by any monitor yet.",
   "dash.channels.emptyTitle": "No alert channels yet",
   "dash.channels.emptyText": "Add an email address, Slack, Discord, Teams, Telegram or a webhook to get notified when a monitor goes down.",
@@ -849,7 +857,8 @@ export const MESSAGES = {
   "dash.err.channelNotFound": "Alert channel not found.",
   "dash.err.monitorLimit": "Your plan includes {limit} monitors. Upgrade to add more.",
   "dash.err.activeLimit": "Your plan allows {limit} active monitors. Pause another monitor or upgrade first.",
-  "dash.err.bulkLimit": "{n} monitor(s) were not resumed: your plan allows {limit} active monitors.",
+  "dash.err.bulkLimitOne": "{n} monitor was not resumed: your plan allows {limit} active monitors.",
+  "dash.err.bulkLimitOther": "{n} monitors were not resumed: your plan allows {limit} active monitors.",
   "dash.err.noneSelected": "Select at least one monitor.",
   "dash.err.testRate": "Too many requests. Wait a minute and try again.",
   "dash.err.channelEmail": "Enter at least one valid email address.",
@@ -870,7 +879,8 @@ export const MESSAGES = {
   "dash.err.maintMonitors": "Select at least one affected monitor.",
   "dash.err.pageName": "Enter a page name of up to 120 characters.",
   "dash.err.pageNotFound": "Status page not found.",
-  "dash.err.pageLimit": "Your plan includes {limit} status page(s). Upgrade to add more.",
+  "dash.err.pageLimitOne": "Your plan includes {limit} status page. Upgrade to add more.",
+  "dash.err.pageLimitOther": "Your plan includes {limit} status pages. Upgrade to add more.",
   "dash.err.slugShort": "Use at least 3 letters or numbers for the address.",
   "dash.err.slugReserved": "This address is reserved. Choose another one.",
   "dash.err.slugTaken": "This address is already taken.",
@@ -1150,4 +1160,17 @@ export function interpolateParts<T>(text: string, vars: Record<string, T>): Arra
     .split(/\{(\w+)\}/g)
     .map((part, i) => (i % 2 === 1 ? (part in vars ? vars[part] : `{${part}}`) : part))
     .filter((part) => part !== "");
+}
+
+/** Message bases that have a singular ("…One") and a plural ("…Other") variant. */
+export type PluralKey = {
+  [K in MessageKey]: K extends `${infer Base}One` ? (`${Base}Other` extends MessageKey ? Base : never) : never;
+}[MessageKey];
+
+/**
+ * Picks the singular or plural variant of a message by count: `{base}One` for 1, `{base}Other` otherwise.
+ * `{n}` is filled with the count unless `vars.n` (e.g. a formatted number) is given.
+ */
+export function plural(t: Translator, base: PluralKey, count: number, vars?: Record<string, string | number>): string {
+  return t(`${base}${count === 1 ? "One" : "Other"}` as MessageKey, { n: count, ...vars });
 }

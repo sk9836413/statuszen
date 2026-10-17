@@ -11,6 +11,7 @@ import { requireDashboardUser } from "@/lib/dashboard";
 import { formatNumber } from "@/lib/dash-format";
 import { countPageComponents, countSubscribers } from "@/lib/dashboard-data";
 import { getLocale, getT } from "@/lib/i18n/server";
+import { plural } from "@/lib/i18n/messages";
 import { atLimit, getEntitlements } from "@/lib/plans";
 import { baseUrl } from "@/lib/request";
 import { uploadUrl } from "@/lib/site";
@@ -50,7 +51,7 @@ export default async function StatusPagesPage({ searchParams }: { searchParams: 
       {full ? (
         <div className="mb-6 flex flex-wrap items-center gap-4 rounded-xl border border-line bg-primary-soft p-5">
           <Crown className="size-5 shrink-0 text-amber-500" aria-hidden />
-          <p className="min-w-0 flex-1 text-sm">{t("dash.err.pageLimit", { limit: entitlements.maxStatusPages })}</p>
+          <p className="min-w-0 flex-1 text-sm">{plural(t, "dash.err.pageLimit", entitlements.maxStatusPages, { limit: entitlements.maxStatusPages })}</p>
           <ButtonLink href="/pricing" size="sm">
             {t("dash.usage.upgradeCta")}
           </ButtonLink>
@@ -79,7 +80,7 @@ export default async function StatusPagesPage({ searchParams }: { searchParams: 
                   )}
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <Link href={`/dashboard/status-pages/${p.id}`} className="truncate font-semibold hover:text-primary">
+                      <Link href={`/dashboard/status-pages/${p.id}`} dir="auto" className="truncate font-semibold hover:text-primary">
                         {p.name}
                       </Link>
                       {p.isPublic ? <Badge tone="success">{t("dash.pages.live")}</Badge> : <Badge>{t("dash.pages.private")}</Badge>}

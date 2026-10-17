@@ -34,7 +34,7 @@ function ComponentRow({
   return (
     <div className="px-5 py-4 sm:px-6">
       <div className="flex items-center justify-between gap-3">
-        <h3 className="min-w-0 truncate font-medium text-ink">{component.name}</h3>
+        <h3 dir="auto" className="min-w-0 truncate font-medium text-ink">{component.name}</h3>
         <div className="flex shrink-0 items-center gap-3">
           {component.response ? (
             <span className="hidden items-center gap-2 sm:flex">
@@ -44,7 +44,7 @@ function ComponentRow({
                 className="h-6 w-20 opacity-90"
               />
               <span className="w-14 text-end font-mono text-xs text-muted tabular-nums" aria-hidden>
-                {t("status.ms", { n: component.response.avgMs ?? 0 })}
+                <bdi>{t("status.ms", { n: component.response.avgMs ?? 0 })}</bdi>
               </span>
             </span>
           ) : null}
@@ -117,7 +117,7 @@ export function ComponentsList({
             <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 select-none sm:px-6 [&::-webkit-details-marker]:hidden">
               <span className="flex min-w-0 items-center gap-2.5">
                 <ChevronDown className="size-4 shrink-0 text-muted transition-transform -rotate-90 rtl:rotate-90 group-open/g:rotate-0 rtl:group-open/g:rotate-0" aria-hidden />
-                <span className="truncate font-semibold text-ink">{name}</span>
+                <span dir="auto" className="truncate font-semibold text-ink">{name}</span>
                 <span className="rounded-full bg-paper px-2 py-0.5 text-xs font-medium text-muted tabular-nums">{items.length}</span>
               </span>
               <StateLabel state={state} label={t(`status.state.${state}`)} compact />

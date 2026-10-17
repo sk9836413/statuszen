@@ -498,18 +498,25 @@ export async function countStoredChecks(): Promise<number> {
 
 /**
  * Public demos have no real cron job behind the sample "Nightly backup" heartbeat.
- * Pretend it pings once a night so the demo status page doesn't show a permanent outage.
+ * Pretend it pings once a night (with a run time) so the demo status page doesn't show a permanent outage.
  */
 async function keepDemoHeartbeatAlive(): Promise<void> {
   const token = await readRaw("demo_heartbeat_token");
   if (!token) return;
   const db = await getDb();
-  const cutoff = iso(Date.now() - 20 * 3_600_000);
-  await db
+  const now = Date.now();
+  const cutoff = iso(now - 20 * 3_600_000);
+  const runMs = Math.round(252_000 * (0.8 + Math.random() * 0.4));
+  const result = await db
     .updateTable("monitors")
-    .set({ last_ping_at: iso(Date.now()), status: "up", fail_streak: 0, next_check_at: iso(Date.now() + 86_400_000) })
+    .set({ last_ping_at: iso(now), last_check_at: iso(now), last_response_ms: runMs, status: "up", fail_streak: 0, next_check_at: iso(now + 86_400_000) })
     .where("heartbeat_token", "=", token)
     .where((eb) => eb.or([eb("last_ping_at", "is", null), eb("last_ping_at", "<", cutoff)]))
     .where("status", "!=", "paused")
-    .execute();
+    .executeTakeFirst();
+  if (!Number(result.numUpdatedRows)) return;
+  const monitor = await db.selectFrom("monitors").select("id").where("heartbeat_token", "=", token).executeTakeFirst();
+  if (monitor) {
+    await db.insertInto("checks").values({ monitor_id: monitor.id, ok: 1, status_code: null, response_ms: runMs, error: null, checked_at: iso(now) }).execute();
+  }
 }

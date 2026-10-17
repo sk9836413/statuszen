@@ -84,11 +84,15 @@ export function formatPercent(value: number | null | undefined, locale: string, 
   return `${formatNumber(floored, locale, { maximumFractionDigits: digits, minimumFractionDigits: floored === 100 ? 0 : Math.min(digits, 2) })}%`;
 }
 
-/** 1234 → "1,234 ms"; null → "—". */
+// Left-to-right isolate: keeps "253 ms" in that order inside right-to-left text (it would show as "ms 253").
+const LRI = String.fromCharCode(0x2066);
+const PDI = String.fromCharCode(0x2069);
+
+/** 1234 → "1,234 ms"; null → "—". The value is wrapped in a left-to-right isolate for RTL languages. */
 export function formatMs(ms: number | null | undefined, locale: string): string {
   if (ms === null || ms === undefined || !Number.isFinite(ms)) return "—";
-  if (ms >= 10_000) return `${formatNumber(Math.round(ms / 100) / 10, locale)} s`;
-  return `${formatNumber(Math.round(ms), locale)} ms`;
+  if (ms >= 10_000) return `${LRI}${formatNumber(Math.round(ms / 100) / 10, locale)} s${PDI}`;
+  return `${LRI}${formatNumber(Math.round(ms), locale)} ms${PDI}`;
 }
 
 /** Positive integer from a query-string value (page numbers). */

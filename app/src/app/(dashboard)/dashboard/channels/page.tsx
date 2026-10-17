@@ -12,7 +12,7 @@ import { getUserChannels, type ChannelRecord } from "@/lib/channels";
 import { requireDashboardUser } from "@/lib/dashboard";
 import { getChannelUsage, getUserMonitorsCached } from "@/lib/dashboard-data";
 import { getT } from "@/lib/i18n/server";
-import type { MessageKey } from "@/lib/i18n/messages";
+import { plural, type MessageKey } from "@/lib/i18n/messages";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getT();
@@ -71,7 +71,7 @@ export default async function ChannelsPage({ searchParams }: { searchParams: Pro
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <Link href={`/dashboard/channels/${c.id}`} className="font-medium hover:text-primary">
+                      <Link href={`/dashboard/channels/${c.id}`} dir="auto" className="font-medium hover:text-primary">
                         {c.name}
                       </Link>
                       <Badge>{t(`dash.channel.${c.type}` as MessageKey)}</Badge>
@@ -82,7 +82,7 @@ export default async function ChannelsPage({ searchParams }: { searchParams: Pro
                     </p>
                     <p className="mt-1 text-xs text-muted">
                       {used.length
-                        ? t("dash.channels.usedBy", { n: used.length, names: used.slice(0, 4).join(", ") + (used.length > 4 ? "…" : "") })
+                        ? plural(t, "dash.channels.usedBy", used.length, { names: used.slice(0, 4).join(", ") + (used.length > 4 ? "…" : "") })
                         : t("dash.channels.unused")}
                     </p>
                   </div>

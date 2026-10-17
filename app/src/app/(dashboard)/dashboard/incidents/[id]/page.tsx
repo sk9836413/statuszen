@@ -77,7 +77,7 @@ export default async function IncidentPage({ params, searchParams }: { params: P
 
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold break-words">{incident.title}</h1>
+          <h1 dir="auto" className="text-2xl font-bold break-words">{incident.title}</h1>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <IncidentStatusBadge status={incident.status} label={t(`dash.istatus.${incident.status}` as MessageKey)} />
             <ImpactBadge impact={incident.impact} label={t(`dash.impact.${incident.impact}` as MessageKey)} />
@@ -115,7 +115,7 @@ export default async function IncidentPage({ params, searchParams }: { params: P
                         {formatDateTime(u.created_at, lc)} · {formatRelative(u.created_at, lc)}
                       </time>
                     </div>
-                    <p className="mt-2 text-sm leading-relaxed break-words whitespace-pre-line">{u.message}</p>
+                    <p dir="auto" className="mt-2 text-sm leading-relaxed break-words whitespace-pre-line">{u.message}</p>
                   </li>
                 ))}
               </ol>
@@ -162,7 +162,7 @@ export default async function IncidentPage({ params, searchParams }: { params: P
                   <li key={m.id}>
                     <Link href={`/dashboard/monitors/${m.id}`} className="flex items-center gap-2.5 px-5 py-2.5 text-sm hover:bg-paper">
                       <StatusDot status={effectiveStatus(m)} size="sm" />
-                      <span className="truncate">{m.name}</span>
+                      <span dir="auto" className="truncate">{m.name}</span>
                     </Link>
                   </li>
                 ))}

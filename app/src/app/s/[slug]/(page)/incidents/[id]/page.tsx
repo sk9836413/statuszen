@@ -55,7 +55,7 @@ export default async function IncidentPage(props: Props) {
               {maintenance ? t(upcoming ? "status.maintenanceUpcoming" : "status.impact.maintenance") : t(`status.impact.${incident.impact}`)}
             </span>
           </div>
-          <h1 className="mt-3 font-display text-2xl leading-tight font-semibold tracking-tight text-ink sm:text-3xl">{incident.title}</h1>
+          <h1 dir="auto" className="mt-3 font-display text-2xl leading-tight font-semibold tracking-tight text-ink sm:text-3xl">{incident.title}</h1>
           <div className="mt-4 flex flex-wrap gap-x-8 gap-y-2 text-sm">
             <div>
                             <p className="text-muted">

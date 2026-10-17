@@ -35,8 +35,11 @@ export async function seedDemoMonitors(trx: Tx, options: { adminId: number; site
   const iso = (msAgo: number) => new Date(now - msAgo).toISOString();
   const created = iso(92 * DAY);
   // Local installs can't monitor themselves (private addresses are blocked), so use a public site there.
-  const local = /^https?:\/\/(localhost|127\.|10\.|192\.168\.|\[?::1)/i.test(options.siteUrl);
-  const ownUrl = /^https?:\/\//.test(options.siteUrl) && !local ? options.siteUrl.replace(/\/$/, "") : "https://example.com";
+  // Missing or non-HTTP site URLs are treated the same way.
+  const local =
+    !/^https?:\/\//i.test(options.siteUrl) ||
+    /^https?:\/\/(localhost|[^/:]+\.(localhost|local|test|internal)(?:[/:]|$)|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|0\.0\.0\.0|\[)/i.test(options.siteUrl);
+  const ownUrl = local ? "https://example.com" : options.siteUrl.replace(/\/$/, "");
   const ownHost = new URL(ownUrl).hostname;
 
   const http = (url: string, extra: Record<string, unknown> = {}) => ({
@@ -56,7 +59,10 @@ export async function seedDemoMonitors(trx: Tx, options: { adminId: number; site
     {
       name: "Pricing page",
       type: "keyword",
-      config: http(`${ownUrl}/pricing`, { keyword: "pricing", keywordMode: "present", caseSensitive: false }),
+      // Local installs check example.com's home page (it has no /pricing page) for its heading.
+      config: local
+        ? http("https://example.com/", { keyword: "Example Domain", keywordMode: "present", caseSensitive: false })
+        : http(`${ownUrl}/pricing`, { keyword: "pricing", keywordMode: "present", caseSensitive: false }),
       group: "Website",
       ms: 310,
       outages: [],
@@ -146,7 +152,11 @@ export async function seedDemoMonitors(trx: Tx, options: { adminId: number; site
       });
     }
   }
+  // Two weeks of nightly backup runs (job run time chart and ping log), the last one two hours ago.
+  const runs = Array.from({ length: 14 }, () => Math.round(252_000 * (0.8 + rand() * 0.4)));
+  runs.forEach((ms, k) => checks.push({ monitor_id: ids[7], ok: 1, status_code: null, response_ms: ms, error: null, checked_at: iso(2 * 3_600_000 + (13 - k) * DAY) }));
   for (let i = 0; i < checks.length; i += 200) await trx.insertInto("checks").values(checks.slice(i, i + 200)).execute();
+  await trx.updateTable("monitors").set({ last_response_ms: runs[runs.length - 1] }).where("id", "=", ids[7]).execute();
 
   // Past incidents (resolved) matching the outages, with updates.
   const incident = async (monitorIdx: number | null, title: string, daysAgo: number, minutes: number, updates: Array<[string, string]>, kind: "auto" | "manual" = "auto") => {

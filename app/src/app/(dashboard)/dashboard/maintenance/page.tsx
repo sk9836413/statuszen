@@ -90,7 +90,7 @@ export default async function MaintenancePage({ searchParams }: { searchParams: 
                             {g.key === "completed" ? <CircleCheck className="size-5" /> : <CalendarClock className="size-5" />}
                           </span>
                           <div className="min-w-0 flex-1">
-                            <Link href={`/dashboard/maintenance/${w.id}`} className="font-medium hover:text-primary">
+                            <Link href={`/dashboard/maintenance/${w.id}`} dir="auto" className="font-medium hover:text-primary">
                               {w.title}
                             </Link>
                             <p className="mt-0.5 text-sm text-muted">

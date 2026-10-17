@@ -12,7 +12,7 @@ import { getUserIncidents, getUserMonitorsCached } from "@/lib/dashboard-data";
 import { buildMonitorItems, effectiveStatus } from "@/lib/dashboard-view";
 import { getUserChannels } from "@/lib/channels";
 import { getLocale, getT } from "@/lib/i18n/server";
-import type { MessageKey } from "@/lib/i18n/messages";
+import { plural, type MessageKey } from "@/lib/i18n/messages";
 import { atLimit, getEntitlements } from "@/lib/plans";
 import { countUserStatusPages } from "@/lib/status-pages";
 import { cn } from "@/lib/utils";
@@ -128,7 +128,7 @@ export default async function DashboardPage() {
             </span>
             <div className="min-w-0">
               <h2 id="dash-summary" className={cn("text-xl font-bold sm:text-2xl", down ? "text-red-900 dark:text-red-100" : "text-emerald-900 dark:text-emerald-100")}>
-                {down ? t("dash.overview.downTitle", { n: down }) : up ? t("dash.overview.allUp") : t("dash.overview.waiting")}
+                {down ? plural(t, "dash.overview.downTitle", down) : up ? t("dash.overview.allUp") : t("dash.overview.waiting")}
               </h2>
               <p className={cn("mt-0.5 text-sm", down ? "text-red-800/80 dark:text-red-200/80" : "text-emerald-800/80 dark:text-emerald-200/80")}>
                 {down ? t("dash.overview.downText") : t("dash.overview.allUpText", { n: up })}
@@ -148,7 +148,7 @@ export default async function DashboardPage() {
             ))}
           </dl>
         </div>
-        {pending ? <p className="mt-4 text-xs text-muted">{t("dash.overview.pending", { n: pending })}</p> : null}
+        {pending ? <p className="mt-4 text-xs text-muted">{plural(t, "dash.overview.pending", pending)}</p> : null}
       </section>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
@@ -186,7 +186,7 @@ export default async function DashboardPage() {
                 {openIncidents.map((i) => (
                   <li key={i.id} className="py-2.5">
                     <Link href={`/dashboard/incidents/${i.id}`} className="block rounded-md hover:text-primary">
-                      <p className="line-clamp-2 text-sm font-medium">{i.title}</p>
+                      <p dir="auto" className="line-clamp-2 text-sm font-medium">{i.title}</p>
                       <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted">
                         <IncidentStatusBadge status={i.status} label={t(`dash.istatus.${i.status}` as MessageKey)} />
                         {formatRelative(i.started_at, lc)}

@@ -17,7 +17,7 @@ import { daysUntil, formatDateTime, formatDay, formatMs, formatNumber, formatPer
 import { countMonitorChecks, getChecksPage, getMonitorAlertLog, getMonitorIncidents, getResponseBuckets, getRollingUptime } from "@/lib/dashboard-data";
 import { effectiveStatus } from "@/lib/dashboard-view";
 import { getLocale, getT } from "@/lib/i18n/server";
-import type { MessageKey } from "@/lib/i18n/messages";
+import { plural, type MessageKey } from "@/lib/i18n/messages";
 import { monitorBadgeKey } from "@/lib/badges";
 import { getOwnedMonitor } from "@/lib/monitors";
 import { baseUrl } from "@/lib/request";
@@ -122,7 +122,7 @@ export default async function MonitorPage({
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="truncate text-2xl font-bold">{monitor.name}</h1>
+            <h1 dir="auto" className="truncate text-2xl font-bold">{monitor.name}</h1>
             <TypeBadge type={monitor.type} label={t(`dash.type.${monitor.type}` as MessageKey)} />
           </div>
           <p className="mt-1 truncate text-sm text-muted" dir="ltr">
@@ -181,7 +181,7 @@ export default async function MonitorPage({
               </p>
             </div>
           </div>
-          <dl className="grid flex-1 grid-cols-2 gap-x-8 gap-y-4 text-sm sm:grid-cols-3">
+          <dl className="grid flex-1 grid-cols-2 gap-x-6 gap-y-4 text-sm max-sm:basis-full sm:grid-cols-3 sm:gap-x-8">
             <div>
               <dt className="text-muted">{isHeartbeat ? t("dash.detail.lastPing") : t("dash.detail.lastCheck")}</dt>
               <dd className="mt-0.5 font-medium">
@@ -244,7 +244,7 @@ export default async function MonitorPage({
                 <div className="min-w-0">
                   <p className="text-sm text-muted">{e.label}</p>
                   <p className={cn("font-display text-xl font-bold", tone)}>
-                    {left === null ? t("dash.detail.expiryUnknown") : left < 0 ? t("dash.detail.expired") : t("dash.detail.daysLeft", { n: left })}
+                    {left === null ? t("dash.detail.expiryUnknown") : left < 0 ? t("dash.detail.expired") : plural(t, "dash.detail.daysLeft", left)}
                   </p>
                   {e.at ? <p className="text-xs text-muted">{formatDateTime(e.at, lc, false)}</p> : null}
                 </div>
@@ -274,7 +274,8 @@ export default async function MonitorPage({
           }
         >
           <ResponseChart
-            label={t("dash.detail.responseChart")}
+            label={isHeartbeat ? t("dash.detail.runtimeChart") : t("dash.detail.responseChart")}
+            variant={isHeartbeat ? "bars" : "line"}
             emptyText={t("dash.detail.noData")}
             axis={{
               start: range === "7d" ? t("dash.detail.daysAgo", { n: 7 }) : t("dash.detail.hoursAgo", { n: 24 }),
@@ -313,7 +314,7 @@ export default async function MonitorPage({
                   : [
                       t("dash.detail.tipUptime", { uptime: formatPercent(d.uptime, lc) }),
                       ...(d.downtimeSec > 0 ? [t("dash.detail.tipDowntime", { time: formatDuration(d.downtimeSec, t) })] : []),
-                      ...(d.incidents > 0 ? [t("dash.detail.tipIncidents", { n: d.incidents })] : []),
+                      ...(d.incidents > 0 ? [plural(t, "dash.detail.tipIncidents", d.incidents)] : []),
                     ],
             },
           }))}
@@ -327,7 +328,7 @@ export default async function MonitorPage({
               {incidents.map((i) => (
                 <li key={i.id}>
                   <Link href={i.kind === "maintenance" ? `/dashboard/maintenance/${i.id}` : `/dashboard/incidents/${i.id}`} className="block px-5 py-3 hover:bg-paper">
-                    <p className="truncate text-sm font-medium">{i.title}</p>
+                    <p dir="auto" className="truncate text-sm font-medium">{i.title}</p>
                     <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted">
                       <IncidentStatusBadge status={i.status} label={t(`dash.istatus.${i.status}` as MessageKey)} />
                       <span>{formatDateTime(i.started_at, lc)}</span>

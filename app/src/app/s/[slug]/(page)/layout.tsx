@@ -85,7 +85,7 @@ export default async function StatusPageLayout({ children, params }: Props) {
                 <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-primary font-display text-lg font-bold text-white shadow-sm">
                   {Array.from(page.name.trim())[0]?.toUpperCase() ?? "S"}
                 </span>
-                <span className="truncate font-display text-lg font-semibold tracking-tight text-ink">{page.name}</span>
+                <span dir="auto" className="truncate font-display text-lg font-semibold tracking-tight text-ink">{page.name}</span>
               </>
             )}
           </a>

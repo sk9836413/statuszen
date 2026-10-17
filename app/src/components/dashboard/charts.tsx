@@ -26,7 +26,8 @@ export function Sparkline({
   const min = values.length ? Math.min(...values) : 0;
   const range = Math.max(1, max - min);
   const step = points.length > 1 ? w / (points.length - 1) : w;
-  const y = (v: number) => h - 3 - ((v - min) / range) * (h - 8);
+  // A single value (e.g. a daily job) sits on the middle line instead of looking like a stray pixel.
+  const y = (v: number) => (values.length === 1 ? h / 2 : h - 3 - ((v - min) / range) * (h - 8));
 
   // Split into segments at gaps so missing hours are not bridged.
   const segments: string[] = [];
@@ -44,14 +45,14 @@ export function Sparkline({
       {failures?.map((f, i) =>
         f > 0 ? <rect key={i} x={Math.max(0, i * step - step / 2)} y={0} width={Math.max(2, step)} height={h} className="fill-red-500/15" /> : null,
       )}
+      {values.length < 2 ? <line x1={0} x2={w} y1={h / 2} y2={h / 2} className="stroke-line" strokeWidth={1.5} strokeDasharray="3 3" vectorEffect="non-scaling-stroke" /> : null}
       {segments.map((seg, i) =>
         seg.includes(" ") ? (
           <polyline key={i} points={seg} fill="none" className="stroke-primary" strokeWidth={1.5} strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
         ) : (
-          <circle key={i} cx={seg.split(",")[0]} cy={seg.split(",")[1]} r={1.5} className="fill-primary" />
+          <circle key={i} cx={seg.split(",")[0]} cy={seg.split(",")[1]} r={2} className="fill-primary" />
         ),
       )}
-      {!values.length ? <line x1={0} x2={w} y1={h / 2} y2={h / 2} className="stroke-line" strokeWidth={1.5} strokeDasharray="3 3" vectorEffect="non-scaling-stroke" /> : null}
     </svg>
   );
 }
@@ -67,8 +68,23 @@ export interface ResponsePoint {
   tip: { title: string; lines: string[] };
 }
 
-/** Response-time area chart with a hover tooltip per bucket and red marks where checks failed. */
-export function ResponseChart({ data, axis, label, emptyText }: { data: ResponsePoint[]; axis: { start: string; middle: string; end: string; unit: (n: number) => string }; label: string; emptyText: string }) {
+/**
+ * Response-time area chart with a hover tooltip per bucket and red marks where checks failed.
+ * `bars` draws one bar per bucket instead, which reads better for sparse data such as daily jobs.
+ */
+export function ResponseChart({
+  data,
+  axis,
+  label,
+  emptyText,
+  variant = "line",
+}: {
+  data: ResponsePoint[];
+  axis: { start: string; middle: string; end: string; unit: (n: number) => string };
+  label: string;
+  emptyText: string;
+  variant?: "line" | "bars";
+}) {
   const values = data.map((d) => d.avgMs).filter((v): v is number => v !== null);
   if (!values.length) {
     return <div className="grid h-56 place-items-center rounded-lg border border-dashed border-line text-sm text-muted">{emptyText}</div>;
@@ -94,6 +110,7 @@ export function ResponseChart({ data, axis, label, emptyText }: { data: Response
   });
   if (seg.length) lines.push(seg);
   const edge = Math.max(2, Math.round(n * 0.15));
+  const barWidth = Math.min(col - 2, Math.max(col * 0.6, 10));
 
   return (
     <figure aria-label={label}>
@@ -121,7 +138,20 @@ export function ResponseChart({ data, axis, label, emptyText }: { data: Response
                 <rect key={`f${i}`} x={x(i) - col / 2 + 1} y={h - 6} width={Math.max(3, col - 2)} height={6} rx={1.5} className="fill-red-500" />
               ) : null,
             )}
-            {lines.map((pts, i) =>
+            {variant === "bars"
+              ? data.map((d, i) =>
+                  d.avgMs !== null ? (
+                    <rect
+                      key={`b${i}`}
+                      x={x(i) - barWidth / 2}
+                      y={Math.min(y(d.avgMs), h - 2)}
+                      width={barWidth}
+                      height={Math.max(2, h - y(d.avgMs))}
+                      className="fill-primary/75"
+                    />
+                  ) : null,
+                )
+              : lines.map((pts, i) =>
               pts.length > 1 ? (
                 <g key={i}>
                   <polygon points={`${pts[0].split(",")[0]},${h} ${pts.join(" ")} ${pts[pts.length - 1].split(",")[0]},${h}`} fill="url(#sz-rt-fill)" />
@@ -141,7 +171,7 @@ export function ResponseChart({ data, axis, label, emptyText }: { data: Response
                     {d.tip.title}: {d.tip.lines.join(", ")}
                   </span>
                   <div className="absolute inset-y-0 left-1/2 hidden w-px -translate-x-1/2 bg-primary/40 group-hover:block" aria-hidden />
-                  {d.avgMs !== null ? (
+                  {d.avgMs !== null && variant === "line" ? (
                     <span
                       className="absolute left-1/2 hidden size-2.5 -translate-x-1/2 translate-y-1/2 rounded-full border-2 border-surface bg-primary group-hover:block"
                       style={{ bottom: `${(d.avgMs / niceMax) * 100}%` }}

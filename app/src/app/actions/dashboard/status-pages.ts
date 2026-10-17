@@ -5,7 +5,7 @@ import { saveUpload } from "@/lib/admin";
 import { guardDashboard } from "@/lib/dashboard";
 import { deleteSubscriber } from "@/lib/dashboard-data";
 import { getT } from "@/lib/i18n/server";
-import type { Translator } from "@/lib/i18n/messages";
+import { plural, type Translator } from "@/lib/i18n/messages";
 import { getUserMonitors } from "@/lib/monitors";
 import { atLimit } from "@/lib/plans";
 import { rateLimit } from "@/lib/rate-limit";
@@ -62,7 +62,7 @@ export async function createStatusPageAction(_prev: FormState, formData: FormDat
   const problem = slugError(slug, t);
   if (problem) return { error: problem };
   if (atLimit(await countUserStatusPages(guard.user.id), guard.entitlements.maxStatusPages)) {
-    return { error: t("dash.err.pageLimit", { limit: guard.entitlements.maxStatusPages }) };
+    return { error: plural(t, "dash.err.pageLimit", guard.entitlements.maxStatusPages, { limit: guard.entitlements.maxStatusPages }) };
   }
   if (await isSlugTaken(slug)) return { error: t("dash.err.slugTaken") };
 

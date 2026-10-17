@@ -25,7 +25,7 @@ export default async function StatusPage({ params }: { params: Promise<{ slug: s
     <main className="mx-auto max-w-3xl space-y-10 px-5 pt-2 pb-8">
       <h1 className="sr-only">{t("status.metaTitle", { name: page.name })}</h1>
       <div>
-        {page.description ? <p className="mb-5 max-w-2xl text-[0.9375rem] leading-relaxed text-muted">{page.description}</p> : null}
+        {page.description ? <p dir="auto" className="mb-5 max-w-2xl text-[0.9375rem] leading-relaxed text-muted">{page.description}</p> : null}
         <OverallBanner status={view.overall} t={t} />
       </div>
 

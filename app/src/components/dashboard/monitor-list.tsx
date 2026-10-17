@@ -74,6 +74,7 @@ export function MonitorRows({
             <div className="flex min-w-0 items-center gap-2">
               <Link
                 href={`/dashboard/monitors/${m.id}`}
+                dir="auto"
                 className="truncate font-medium after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:rounded-lg focus-visible:after:ring-2 focus-visible:after:ring-primary focus-visible:after:ring-inset"
               >
                 {m.name}

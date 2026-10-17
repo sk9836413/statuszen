@@ -1,0 +1,88 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  @font-face { font-family: "Bricolage"; src: url("../../app/src/fonts/bricolage-grotesque.woff2") format("woff2"); font-weight: 200 800; }
+  @font-face { font-family: "Instrument"; src: url("../../app/src/fonts/instrument-sans.woff2") format("woff2"); font-weight: 400 700; }
+  @font-face { font-family: "JBMono"; src: url("../../app/src/fonts/jetbrains-mono.woff2") format("woff2"); font-weight: 400 800; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1440px; height: 900px; overflow: hidden; }
+  body { font-family: "Instrument", sans-serif; color: #111827; position: relative;
+    background-color: #f4f7fd;
+    background-image:
+      radial-gradient(760px 460px at 20% 115%, rgba(29, 91, 216, .2), transparent 70%),
+      radial-gradient(560px 340px at 100% 0%, rgba(34, 197, 94, .16), transparent 70%),
+      linear-gradient(rgba(29,91,216,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(29,91,216,.07) 1px, transparent 1px);
+    background-size: auto, auto, 24px 24px, 24px 24px; }
+  .head { position: absolute; left: 80px; top: 52px; width: 760px; }
+  .eyebrow { font-size: 15px; font-weight: 600; color: #1d5bd8; }
+  .eyebrow i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; margin-right: 8px; vertical-align: 1px; box-shadow: 0 0 0 3px rgba(34,197,94,.25); }
+  h1 { font-family: "Bricolage"; font-size: 46px; line-height: 1.04; letter-spacing: -.025em; margin: 10px 0 10px; font-weight: 800; }
+  .head p { margin: 0; font-size: 18px; line-height: 1.5; color: #5b6475; }
+
+  .browser { position: absolute; left: 80px; top: 262px; width: 800px; border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 40px 90px -30px rgba(18, 50, 120, .45), 0 0 0 1px rgba(17,24,39,.08); }
+  .browser .bar { height: 38px; background: #eef1f7; display: flex; align-items: center; gap: 7px; padding: 0 14px; border-bottom: 1px solid #e1e6f0; }
+  .browser .bar i { width: 10px; height: 10px; border-radius: 50%; background: #cfd5e1; }
+  .browser .url { margin-left: 14px; flex: 1; height: 24px; border-radius: 7px; background: #fff; font-size: 12.5px; color: #4b5563; display: flex; align-items: center; padding: 0 10px; }
+  .browser .view { position: relative; height: 500px; overflow: hidden; }
+  .browser .view img { position: absolute; width: 800px; left: 0; top: 0; }
+  /* Zoomed copy of the widget corner (x 1112-1432, y 744-892 of the screenshot). */
+  .zoom { position: absolute; left: 452px; top: 648px; width: 448px; height: 207px; border-radius: 16px; overflow: hidden; background: #fbf8f3; box-shadow: 0 30px 60px -18px rgba(17,24,39,.45), 0 0 0 1px rgba(17,24,39,.08); }
+  .zoom img { position: absolute; width: 2016px; left: -1557px; top: -1042px; }
+  .zoom-label { position: absolute; left: 452px; top: 616px; font-size: 13px; font-weight: 700; color: #1d5bd8; background: #fff; border: 1px solid #dbe4f5; padding: 4px 10px; border-radius: 999px; z-index: 2; }
+  .side { position: absolute; left: 920px; top: 52px; width: 440px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .card { background: #fff; border-radius: 16px; box-shadow: 0 18px 40px -20px rgba(17, 24, 39, .28), 0 0 0 1px rgba(17,24,39,.06); padding: 18px 20px; }
+  .card h2 { font-family: "Bricolage"; font-size: 19px; margin: 0 0 3px; font-weight: 700; letter-spacing: -.01em; }
+  .card .d { font-size: 13.5px; color: #6b7280; margin: 0 0 12px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 10px 12px; align-items: center; }
+  .badges img { height: 30px; display: block; }
+  pre { margin: 0; background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 12px 14px; font-family: "JBMono"; font-size: 12px; line-height: 1.6; white-space: pre; overflow: hidden; }
+  pre .k { color: #7dd3fc; } pre .s { color: #86efac; } pre .c { color: #94a3b8; } pre .n { color: #fca5a5; }
+</style></head>
+<body>
+  <div class="head">
+    <div class="eyebrow"><i></i>Badges · status widget · JSON API</div>
+    <h1>Show the live status on any website</h1>
+    <p>Customers add a badge to their README, drop a 2 KB widget on their site or read the public JSON API. It all updates by itself.</p>
+  </div>
+
+  <div class="browser">
+    <div class="bar"><i></i><i></i><i></i><div class="url">northwind.io</div></div>
+    <div class="view"><img src="../raw/x3-widget-outage.png"></div>
+  </div>
+  <div class="zoom"><img src="../raw/x3-widget-outage.png"></div>
+  <span class="zoom-label">sz.js widget, zoomed in</span>
+
+  <div class="side">
+    <div class="card">
+      <h2>SVG status badges</h2>
+      <p class="d">Status page, monitor status or 30-day uptime. Flat or flat-square, custom label.</p>
+      <div class="badges">
+        <img src="../raw/badges/page.svg"><img src="../raw/badges/monitor-uptime.svg"><img src="../raw/badges/page-label.svg">
+        <img src="../raw/badges/monitor-label.svg"><img src="../raw/badges/monitor-uptime-square.svg"><img src="../raw/badges/page-square.svg">
+      </div>
+    </div>
+    <div class="card">
+      <h2>Status widget in one line</h2>
+      <p class="d">A status pill, plus a banner while an incident is open. Shadow DOM, light or dark.</p>
+<pre>&lt;script async
+  src=<span class="s">"https://status.example.com/sz.js"</span>
+  data-page=<span class="s">"demo"</span>
+  data-position=<span class="s">"bottom-right"</span>&gt;&lt;/script&gt;</pre>
+    </div>
+    <div class="card">
+      <h2>Public JSON API</h2>
+      <p class="d">Read-only, CORS enabled, cached for 30 seconds.</p>
+<pre><span class="c">GET /api/status/demo</span>
+{
+  <span class="k">"status"</span>: <span class="s">"partial_outage"</span>,
+  <span class="k">"headline"</span>: <span class="s">"Partial outage"</span>,
+  <span class="k">"components"</span>: [
+    { <span class="k">"name"</span>: <span class="s">"Pricing page"</span>, <span class="k">"status"</span>: <span class="s">"down"</span> }, …
+  ],
+  <span class="k">"activeIncidents"</span>: [
+    { <span class="k">"title"</span>: <span class="s">"Pricing page is down"</span>, … }
+  ]
+}</pre>
+    </div>
+  </div>
+</body></html>

@@ -30,16 +30,16 @@ export function Logo({
       {logo ? (
         <>
           {/* eslint-disable-next-line @next/next/no-img-element -- admin-uploaded logo of unknown size */}
-          <img src={logo} alt={siteName} className={cn("h-8 w-auto", logoDark && "dark:hidden")} />
+          <img src={logo} alt={siteName} className={cn("h-8 w-auto max-w-full object-contain object-left rtl:object-right", logoDark && "dark:hidden")} />
           {logoDark ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={logoDark} alt={siteName} className="hidden h-8 w-auto dark:block" />
+            <img src={logoDark} alt={siteName} className="hidden h-8 w-auto max-w-full object-contain object-left dark:block rtl:object-right" />
           ) : null}
         </>
       ) : (
         <>
-          <BrandMark />
-          <span className="font-display text-xl font-bold tracking-tight text-ink">{siteName}</span>
+          <BrandMark className="shrink-0" />
+          <span className="truncate font-display text-xl font-bold tracking-tight text-ink">{siteName}</span>
         </>
       )}
     </Link>

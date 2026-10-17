@@ -84,7 +84,7 @@ export function HeroMockup({ t, site }: { t: Translator; site: string }) {
               <div key={k.label} className="rounded-xl border border-line bg-paper/60 px-3 py-2.5">
                 <p className="truncate text-[10px] font-medium text-muted sm:text-[11px]">{k.label}</p>
                 <p className="mt-0.5 flex items-baseline gap-1.5">
-                  <span className="font-display text-lg font-bold tabular-nums sm:text-xl">{k.value}</span>
+                  <bdi className="font-display text-lg font-bold tabular-nums sm:text-xl">{k.value}</bdi>
                   {k.trend ? (
                     <span className="hidden items-center gap-0.5 text-[10px] font-semibold text-emerald-600 sm:inline-flex dark:text-emerald-400" dir="ltr">
                       <TrendingUp className="size-3" aria-hidden />
@@ -154,7 +154,9 @@ export function HeroMockup({ t, site }: { t: Translator; site: string }) {
                     <span key={b} className={cn("flex-1 rounded-[2px]", TONE[tone], b < 10 && "max-sm:hidden")} />
                   ))}
                 </span>
-                <span className="w-14 shrink-0 text-end text-xs font-semibold tabular-nums">{m.value}</span>
+                <span className="w-14 shrink-0 text-end text-xs font-semibold tabular-nums">
+                  <bdi>{m.value}</bdi>
+                </span>
               </li>
             ))}
           </ul>

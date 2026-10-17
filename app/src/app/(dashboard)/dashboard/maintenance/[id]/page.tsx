@@ -80,7 +80,7 @@ export default async function MaintenanceWindowPage({ params }: { params: Promis
                     <IncidentStatusBadge status={u.status} label={t(`dash.istatus.${u.status}` as MessageKey)} />
                     <span className="text-xs text-muted">{formatDateTime(u.created_at, locale.code)}</span>
                   </div>
-                  <p className="mt-1.5 text-sm break-words whitespace-pre-line">{u.message}</p>
+                  <p dir="auto" className="mt-1.5 text-sm break-words whitespace-pre-line">{u.message}</p>
                 </li>
               ))}
             </ol>

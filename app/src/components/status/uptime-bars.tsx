@@ -157,7 +157,7 @@ export function UptimeBars({ bars, locale, labels }: { bars: Bar[]; locale: stri
                 {current[3].slice(0, 3).map((title, i) => (
                   <li key={i} className="flex gap-2 text-ink">
                     <span aria-hidden className="mt-[0.45rem] size-1.5 shrink-0 rounded-full bg-red-500" />
-                    <span className="line-clamp-2">{title}</span>
+                    <span dir="auto" className="line-clamp-2">{title}</span>
                   </li>
                 ))}
               </ul>

@@ -14,7 +14,7 @@ export async function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-paper/85 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:px-6">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-2 px-3 sm:gap-3 sm:px-6">
         <MobileMenu
           signedIn={Boolean(user)}
           isAdmin={user?.role === "admin"}
@@ -22,7 +22,7 @@ export async function SiteHeader() {
           showBlog={blogVisible}
           showContact={settings.contact_enabled}
         />
-        <Logo siteName={settings.site_name} logo={uploadUrl(settings.logo)} logoDark={uploadUrl(settings.logo_dark)} />
+        <Logo siteName={settings.site_name} logo={uploadUrl(settings.logo)} logoDark={uploadUrl(settings.logo_dark)} className="min-w-0" />
 
         <nav aria-label="Main" className="ms-4 hidden items-center gap-1 text-sm font-medium lg:flex">
           <Link href="/#features" className={navLink}>
@@ -43,7 +43,7 @@ export async function SiteHeader() {
           ) : null}
         </nav>
 
-        <div className="ms-auto flex items-center gap-2">
+        <div className="ms-auto flex shrink-0 items-center gap-1 sm:gap-2">
           {languages.length > 1 ? (
             <LanguageSwitcher current={locale.code} languages={languages.map((l) => ({ code: l.code, name: l.native_name }))} />
           ) : null}

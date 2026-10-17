@@ -6,6 +6,7 @@ import { getUserChannels } from "@/lib/channels";
 import { runCheck } from "@/lib/checks";
 import { countActiveMonitors } from "@/lib/dashboard-data";
 import { getT } from "@/lib/i18n/server";
+import { plural } from "@/lib/i18n/messages";
 import {
   countUserMonitors,
   createMonitor,
@@ -185,8 +186,8 @@ export async function bulkMonitorsAction(_prev: FormState, formData: FormData): 
       changed += 1;
     }
   }
-  if (skipped) return { error: t("dash.err.bulkLimit", { n: skipped, limit: maxMonitors }) };
-  return { success: t("dash.monitors.bulkDone", { n: changed }) };
+  if (skipped) return { error: plural(t, "dash.err.bulkLimit", skipped, { limit: maxMonitors }) };
+  return { success: plural(t, "dash.monitors.bulkDone", changed) };
 }
 
 export async function deleteMonitorAction(_prev: FormState, formData: FormData): Promise<FormState> {

@@ -1,0 +1,80 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Northwind – Inventory for independent shops</title>
+<style>
+  @font-face { font-family: "Bricolage"; src: url("../../app/src/fonts/bricolage-grotesque.woff2") format("woff2"); font-weight: 200 800; }
+  @font-face { font-family: "Instrument"; src: url("../../app/src/fonts/instrument-sans.woff2") format("woff2"); font-weight: 400 700; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { font-family: "Instrument", sans-serif; color: #1c2430; background: #fbf8f3; min-height: 100vh; }
+  body.dark { background: #13161c; color: #e7eaf0; }
+  nav { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 26px 40px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-family: "Bricolage"; font-weight: 800; font-size: 23px; letter-spacing: -.02em; }
+  .logo i { width: 34px; height: 34px; border-radius: 10px; background: #0f766e; display: grid; place-items: center; color: #fff; font-style: normal; font-size: 19px; }
+  .links { display: flex; gap: 34px; font-size: 16px; color: #4a5462; }
+  .dark .links { color: #a8b0bd; }
+  .btn { background: #0f766e; color: #fff; padding: 11px 20px; border-radius: 10px; font-weight: 600; font-size: 15px; }
+  .ghost { background: transparent; color: inherit; border: 1px solid rgba(0,0,0,.14); }
+  .dark .ghost { border-color: rgba(255,255,255,.2); }
+  .hero { max-width: 1200px; margin: 0 auto; padding: 70px 40px 0; display: grid; grid-template-columns: 1.05fr .95fr; gap: 60px; align-items: center; }
+  .tag { display: inline-block; font-size: 14px; font-weight: 600; color: #0f766e; background: #d9f2ee; padding: 6px 12px; border-radius: 999px; }
+  .dark .tag { background: rgba(15,118,110,.25); color: #5eead4; }
+  h1 { font-family: "Bricolage"; font-size: 62px; line-height: 1.02; letter-spacing: -.03em; margin: 18px 0 18px; font-weight: 800; }
+  p.lead { font-size: 20px; line-height: 1.55; color: #56606e; margin: 0 0 30px; max-width: 520px; }
+  .dark p.lead { color: #9aa3b1; }
+  .cta { display: flex; gap: 12px; }
+  .card { background: #fff; border-radius: 22px; box-shadow: 0 30px 60px rgba(28, 36, 48, .12), 0 0 0 1px rgba(28,36,48,.06); padding: 26px; }
+  .dark .card { background: #1c212b; box-shadow: 0 30px 60px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.06); }
+  .card h3 { margin: 0 0 4px; font-size: 15px; color: #7a8391; font-weight: 600; }
+  .big { font-family: "Bricolage"; font-size: 40px; font-weight: 800; letter-spacing: -.02em; }
+  .rows { margin-top: 18px; display: grid; gap: 10px; }
+  .row { display: flex; justify-content: space-between; align-items: center; padding: 13px 15px; border-radius: 12px; background: #f6f3ee; font-size: 15px; }
+  .dark .row { background: #252b36; }
+  .row b { font-weight: 600; }
+  .pill { font-size: 13px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: #dcfce7; color: #166534; }
+  .pill.low { background: #fef3c7; color: #92400e; }
+  .dark .pill { background: rgba(34,197,94,.18); color: #86efac; }
+  .dark .pill.low { background: rgba(245,158,11,.2); color: #fcd34d; }
+  .bars { display: flex; align-items: flex-end; gap: 8px; height: 90px; margin-top: 16px; }
+  .bars span { flex: 1; border-radius: 6px 6px 2px 2px; background: linear-gradient(#14b8a6, #0f766e); }
+  .logos { max-width: 1200px; margin: 70px auto 0; padding: 0 40px; display: flex; gap: 56px; color: #9aa1ab; font-family: "Bricolage"; font-weight: 700; font-size: 22px; align-items: center; }
+  .logos small { font-family: "Instrument"; font-size: 14px; font-weight: 500; color: #8a929d; }
+</style></head>
+<body>
+  <nav>
+    <div class="logo"><i>N</i>Northwind</div>
+    <div class="links"><span>Product</span><span>Pricing</span><span>Customers</span><span>Docs</span></div>
+    <div class="cta"><span class="btn ghost">Sign in</span><span class="btn">Start free trial</span></div>
+  </nav>
+  <section class="hero">
+    <div>
+      <span class="tag">New: barcode scanning on Android</span>
+      <h1>Inventory that keeps up with your shop</h1>
+      <p class="lead">Track stock across your store, warehouse and online shop. Reorder before you run out, and see what sells.</p>
+      <div class="cta"><span class="btn">Start your free trial</span><span class="btn ghost">Book a demo</span></div>
+    </div>
+    <div class="card">
+      <h3>Stock value</h3>
+      <div class="big">$184,920</div>
+      <div class="bars"><span style="height:38%"></span><span style="height:52%"></span><span style="height:46%"></span><span style="height:64%"></span><span style="height:58%"></span><span style="height:76%"></span><span style="height:70%"></span><span style="height:88%"></span><span style="height:82%"></span><span style="height:100%"></span></div>
+      <div class="rows">
+        <div class="row"><b>Linen tote bag</b><span class="pill">412 in stock</span></div>
+        <div class="row"><b>Ceramic pour-over set</b><span class="pill low">Reorder: 9 left</span></div>
+        <div class="row"><b>Organic cotton apron</b><span class="pill">188 in stock</span></div>
+      </div>
+    </div>
+  </section>
+  <div class="logos"><small>Trusted by 4,000+ shops</small><span>Maple&amp;Co</span><span>Kettle Bros.</span><span>Fernwood</span><span>Little Harbor</span><span>OAKLINE</span></div>
+  <script>
+    // The marketing script passes the platform address: ?base=http://localhost:3700
+    const q = new URLSearchParams(location.search);
+    if (q.get("dark")) document.body.classList.add("dark");
+    const s = document.createElement("script");
+    s.async = true;
+    s.src = (q.get("base") || "http://localhost:3700") + "/sz.js";
+    s.setAttribute("data-page", "demo");
+    s.setAttribute("data-position", "bottom-right");
+    s.setAttribute("data-theme", q.get("dark") ? "dark" : "light");
+    document.body.appendChild(s);
+  </script>
+</body></html>

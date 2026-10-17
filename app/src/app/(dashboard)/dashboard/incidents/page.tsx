@@ -71,7 +71,7 @@ export default async function IncidentsPage({ searchParams }: { searchParams: Pr
                 <li key={i.id}>
                   <Link href={`/dashboard/incidents/${i.id}`} className="block px-5 py-4 transition-colors hover:bg-paper">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="min-w-0 flex-1 truncate font-medium">{i.title}</p>
+                      <p dir="auto" className="min-w-0 flex-1 truncate font-medium">{i.title}</p>
                       <IncidentStatusBadge status={i.status} label={t(`dash.istatus.${i.status}` as MessageKey)} />
                     </div>
                     <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-muted">
@@ -81,7 +81,7 @@ export default async function IncidentsPage({ searchParams }: { searchParams: Pr
                       {i.resolved_at ? <span>· {t("dash.incidents.lasted", { time: formatDuration((Date.parse(i.resolved_at) - Date.parse(i.started_at)) / 1000, t) })}</span> : null}
                       {affected.length ? <span className="truncate">· {affected.join(", ")}</span> : null}
                     </div>
-                    {latest ? <p className="mt-2 line-clamp-2 text-sm text-muted">{latest.message}</p> : null}
+                    {latest ? <p dir="auto" className="mt-2 line-clamp-2 text-sm text-muted">{latest.message}</p> : null}
                   </Link>
                 </li>
               );

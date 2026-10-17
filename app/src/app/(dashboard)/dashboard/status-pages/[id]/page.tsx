@@ -63,7 +63,7 @@ export default async function StatusPageBuilderPage({ params, searchParams }: { 
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="truncate text-2xl font-bold">{page.name}</h1>
+            <h1 dir="auto" className="truncate text-2xl font-bold">{page.name}</h1>
             {page.isPublic ? <Badge tone="success">{t("dash.pages.live")}</Badge> : <Badge>{t("dash.pages.private")}</Badge>}
           </div>
           <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block truncate text-sm text-muted hover:text-primary" dir="ltr">

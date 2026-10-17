@@ -105,6 +105,7 @@
     <li><a href="#payments">Payment gateways</a></li>
     <li><a href="#email">Email (SMTP)</a></li>
     <li><a href="#i18n">Languages &amp; RTL</a></li>
+    <li class="sub"><a href="#language-packs">Arabic &amp; Hindi packs</a></li>
     <li><a href="#seo">SEO</a></li>
     <li><a href="#privacy">Privacy &amp; security</a></li>
     <li><a href="#performance">Performance &amp; limits</a></li>
@@ -186,6 +187,7 @@
     ├── scripts/
     │   ├── build-widget.mjs  Builds public/sz.js (runs automatically with npm run build)
     │   └── worker.mjs        The check worker (npm run worker)
+    ├── languages/            Language packs to import: ar.json (Arabic, RTL), hi.json (Hindi)
     ├── public/               Public static files (sz.js is generated here)
     ├── storage/              Created data: config.json, SQLite database, uploads
     ├── server.js             Start file for cPanel / Passenger / PM2
@@ -1010,11 +1012,20 @@ GET https://uptime.example.com/api/status/acme?lang=de
   <li>Choose the <strong>default language</strong> for visitors who haven't picked one.</li>
 </ol>
 <p>Anything you leave empty falls back to English, so you can translate step by step. To translate offline (or with a translation service), click <strong>Download template</strong>: you get a JSON file with every text. Translate the values, keep the keys, and upload the file with <strong>Import</strong>. <strong>Export</strong> downloads the translations you have so far. You can also change the English wording itself: open English and enter your own text.</p>
-<p>Right-to-left languages (Arabic, Hebrew, Persian, Urdu) flip the public site, status pages and the dashboard automatically. The admin panel stays in English. Version 1.0 does not include ready-made language packs.</p>
+<p>Right-to-left languages (Arabic, Hebrew, Persian, Urdu) flip the public site, status pages and the dashboard automatically. The admin panel stays in English.</p>
 <ul>
   <li><strong>Status pages</strong> appear in the visitor's chosen language, or your default language. The JSON API and the widget accept <code>?lang=</code> / <code>data-lang</code>. Incident titles and messages are written by your customers, in any language.</li>
   <li><strong>Alerts</strong> (email, Slack, Discord, Teams, Telegram, webhook) and <strong>subscriber update emails</strong> are in English. The subscription confirmation email is translated.</li>
 </ul>
+
+<h3 id="language-packs">Bundled language packs: Arabic and Hindi</h3>
+<p>The package includes two ready-made language packs in <code>statuszen/languages/</code>: <code>ar.json</code> (Arabic, right-to-left) and <code>hi.json</code> (Hindi). Each one translates all 1,085 interface texts: the public site, sign-in pages, checkout, public status pages and the customer dashboard. To install one:</p>
+<ol class="steps">
+  <li>Open <strong>Admin → Languages</strong> and add the language: pick <em>Arabic</em> (code <code>ar</code>, right-to-left) or <em>Hindi</em> (code <code>hi</code>) from the list.</li>
+  <li>Click <strong>Translate</strong>, then under <strong>Import translations</strong> choose <code>languages/ar.json</code> or <code>languages/hi.json</code> from the package and import it.</li>
+  <li>Translate the <em>Site texts</em> (tagline, headline, footer) yourself, as they are your own wording, and switch the language to <strong>Active</strong>.</li>
+</ol>
+<p>On demo sites (<code>DEMO_SEED=true</code>, see <a href="#demo">Demo mode</a>) both packs are installed and activated automatically. The packs were prepared with translation software. Have a native speaker review them before you rely on them for customers. Like any import, you can change single texts afterwards in the editor.</p>
 
 <!-- ───────────────────────────── SEO ───────────────────────────── -->
 <h2 id="seo">SEO</h2>
@@ -1129,9 +1140,10 @@ GET https://uptime.example.com/api/status/acme?lang=de
 <ul>
   <li>45 sample customers (a third of them on paid plans, one banned), payments including bank transfers waiting for approval, and contact messages.</li>
   <li>For the first administrator: 8 monitors (website, keyword, public API, docs, SSL, domain, DNS and a “Nightly backup” heartbeat) with 90 days of history and past incidents, a planned maintenance, an email alert channel, and a public status page <strong>Northwind</strong> at <code>/s/demo</code> with three subscribers. This page is set as <em>Status page on your home page</em>.</li>
+  <li>The bundled <a href="#language-packs">Arabic and Hindi language packs</a>, active, so visitors can try the language switcher and the right-to-left layout.</li>
 </ul>
 <p>The sample monitors check your Site URL. When the Site URL is <code>localhost</code> or a private address, they check <code>https://example.com</code> instead, because private addresses can't be monitored.</p>
-<div class="note">Set <code>ADMIN_EMAIL</code>/<code>ADMIN_PASSWORD</code> and the Site URL (or <code>SITE_URL</code>) together with <code>DEMO_SEED</code>: the sample monitors are created for the first administrator, and seeding runs only once per database. The sample heartbeat expects a ping every 24 hours (1-hour grace). Nothing pings it, so about a day after seeding it goes <em>down</em> and the demo page shows a partial outage. To keep the demo green, ping its URL daily (copy it from the monitor's page) with a free cron service, or pause the monitor.</div>
+<div class="note">Set <code>ADMIN_EMAIL</code>/<code>ADMIN_PASSWORD</code> and the Site URL (or <code>SITE_URL</code>) together with <code>DEMO_SEED</code>: the sample monitors are created for the first administrator, and seeding runs only once per database. The sample heartbeat expects a ping every 24 hours (1-hour grace). While <code>DEMO_SEED=true</code> is set, the scheduler reports a nightly run for it, so it stays <em>up</em> as long as checks run (see <a href="#scheduling">Scheduling checks</a>).</div>
 
 <!-- ───────────────────────────── Update ───────────────────────────── -->
 <h2 id="update">Updating to a new version</h2>
@@ -1269,6 +1281,7 @@ GET https://uptime.example.com/api/status/acme?lang=de
   <li>Status and uptime badges, the <code>sz.js</code> status widget and a public JSON API.</li>
   <li>Plans with monitor, status page and interval limits and branding removal; Stripe, PayPal, Razorpay and bank transfer.</li>
   <li>Admin panel, blog, content pages, multi-language with RTL, web installer for MySQL or SQLite, PM2 and Docker configurations.</li>
+  <li>Arabic (right-to-left) and Hindi language packs in <code>languages/</code>, installed automatically on demo sites.</li>
 </ul></div>
 
 <!-- ───────────────────────────── Support ───────────────────────────── -->

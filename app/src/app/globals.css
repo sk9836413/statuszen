@@ -152,6 +152,13 @@
     text-wrap: pretty;
   }
 
+  /* User-written text (names, descriptions, incident updates) carries dir="auto" so its punctuation and
+     numbers follow its own language; its alignment still follows the page. */
+  :where(p, h1, h2, h3, h4, div, li, dd, td)[dir="auto"] {
+    text-align: -webkit-match-parent;
+    text-align: match-parent;
+  }
+
   :focus-visible {
     outline: 2px solid var(--primary);
     outline-offset: 2px;

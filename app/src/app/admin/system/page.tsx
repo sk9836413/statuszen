@@ -28,7 +28,7 @@ export default async function SystemPage() {
     ["Application version", APP_VERSION],
     ["Node.js", process.versions.node],
     ["Database", driver === "mysql" ? "MySQL / MariaDB" : "SQLite"],
-    ["Storage folder", <code key="s" className="font-mono text-xs">{storageDir()}</code>],
+    ["Storage folder", <code key="s" className="font-mono text-xs break-all">{storageDir()}</code>],
     ["Environment", process.env.NODE_ENV],
     ["Demo mode", isDemoMode() ? <Badge key="d" tone="warning">On</Badge> : "Off"],
     ["Email", mailConfigured(settings) ? <Badge key="e" tone="success">Configured</Badge> : <Badge key="e">Not configured</Badge>],
