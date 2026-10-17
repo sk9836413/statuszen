@@ -60,11 +60,8 @@ The cron URL also accepts `Authorization: Bearer SECRET` (as sent by Vercel Cron
 - **PM2:** `ecosystem.config.cjs` starts the app (`statuszen`) and the worker (`statuszen-worker`).
 - **Docker:** `docker-compose.yml` runs `app`, `worker` and MySQL 8.4.
 
-> **Warning:** both `ecosystem.config.cjs` and `docker-compose.yml` fall back to the placeholder
-> secret `change-me-to-a-long-random-string` when `CRON_SECRET` isn't set. That value is public.
-> Set your own: `export CRON_SECRET=$(openssl rand -hex 24)` before `pm2 start ecosystem.config.cjs`
-> (or edit the file), or put `CRON_SECRET=…` in a `.env` file next to `docker-compose.yml`.
-> A `CRON_SECRET` in `.env.local` does not override the value PM2 passes to the processes.
+> **Required:** set `CRON_SECRET` (12+ random characters, e.g. `openssl rand -hex 24`) before `pm2 start` or
+> `docker compose up`. docker-compose refuses to start without it, and the app ignores short or example values.
 
 ## Project structure
 

@@ -245,7 +245,7 @@ npm run build</code></pre></li>
 echo "$CRON_SECRET"          # keep a copy
 pm2 start ecosystem.config.cjs
 pm2 save &amp;&amp; pm2 startup</code></pre>
-    <div class="warn"><p><strong>Always set your own <code>CRON_SECRET</code>.</strong> When it is not set in the shell that runs <code>pm2 start</code>, <code>ecosystem.config.cjs</code> falls back to the placeholder <code>change-me-to-a-long-random-string</code>, which is public. Everything still works, but anyone could call your cron URL. A <code>CRON_SECRET</code> line in <code>.env.local</code> does <em>not</em> help here, because PM2 passes the placeholder to both processes and an existing environment variable wins over <code>.env</code> files. Either export the variable before <code>pm2 start</code> (as above) or write your secret into <code>ecosystem.config.cjs</code>. After changing it run <code>pm2 restart ecosystem.config.cjs --update-env</code>.</p></div></li>
+    <div class="warn"><p><strong>Always set your own <code>CRON_SECRET</code> before <code>pm2 start</code>.</strong> Without it the worker process cannot run checks (PM2 prints a warning), and a <code>CRON_SECRET</code> line in <code>.env.local</code> is not passed to the worker. Export the variable before <code>pm2 start</code> (as above) or write your secret into <code>ecosystem.config.cjs</code>. Use at least 12 random characters. After changing it run <code>pm2 restart ecosystem.config.cjs --update-env</code>.</p></div></li>
   <li>Create <code>/etc/nginx/sites-available/statuszen</code>:
 <pre><code>server {
     listen 80;
@@ -279,7 +279,7 @@ sudo certbot --nginx -d uptime.example.com</code></pre></li>
 <pre><code>cd statuszen
 docker compose up -d --build</code></pre>
 <p>Open <code>http://your-server:3000</code>. In the installer choose MySQL with host <code>db</code>, port <code>3306</code>, database <code>statuszen</code>, user <code>statuszen</code>, password <code>statuszen</code> (change these and <code>MYSQL_ROOT_PASSWORD</code> in <code>docker-compose.yml</code> first). The <code>storage</code> folder is kept in a Docker volume. Put Nginx, Caddy or Traefik with HTTPS in front of port 3000.</p>
-<div class="warn">Without the <code>.env</code> file, <code>docker-compose.yml</code> uses the public placeholder <code>change-me-to-a-long-random-string</code> as the cron secret. Set your own. Build the image from a clean copy of the package (without a local <code>node_modules</code> or <code>.next</code> folder): the Dockerfile copies the whole folder into the build.</div>
+<div class="warn"><code>docker-compose.yml</code> refuses to start until <code>CRON_SECRET</code> is set in the <code>.env</code> file next to it (at least 12 random characters). The included <code>.dockerignore</code> keeps local <code>node_modules</code>, <code>.next</code> and <code>storage</code> folders out of the image.</div>
 <p>Without Compose:</p>
 <pre><code>docker build -t statuszen .
 docker network create statuszen-net
@@ -424,7 +424,7 @@ jobs:
 <pre><code>CRON_SECRET=YOUR-SECRET npm run worker</code></pre>
 <table>
   <tr><th>Variable</th><th>Meaning</th></tr>
-  <tr><td><code>CRON_SECRET</code></td><td>Required. The same value the app uses (environment variable) or the secret shown in Admin → System.</td></tr>
+  <tr><td><code>CRON_SECRET</code></td><td>Required. The same value the app uses (environment variable) or the secret shown in Admin → System. At least 12 characters; the example value <code>change-me-to-a-long-random-string</code> is ignored.</td></tr>
   <tr><td><code>WORKER_URL</code></td><td>Address of the app. Default: <code>SITE_URL</code>, else <code>http://localhost:$PORT</code>.</td></tr>
   <tr><td><code>PORT</code></td><td>App port used for the default address (default 3000).</td></tr>
   <tr><td><code>WORKER_INTERVAL_SEC</code></td><td>Seconds between ticks (default 15, minimum 5).</td></tr>
@@ -1150,7 +1150,7 @@ GET https://uptime.example.com/api/status/acme?lang=de
   <tr><th>Variable</th><th>Purpose</th></tr>
   <tr><td><code>PORT</code></td><td>Port to listen on (default 3000). <code>HOST</code> sets the address for <code>server.js</code> (default <code>0.0.0.0</code>).</td></tr>
   <tr><td><code>SITE_URL</code></td><td>Public address of the platform, used when “Site URL” is empty in the admin panel. On Vercel, the production domain is used as a last fallback.</td></tr>
-  <tr><td><code>CRON_SECRET</code></td><td>Secret for the cron URL and the worker. Without it, a random secret is stored in the database and shown in Admin → System. Vercel Cron sends it automatically. <strong>Set your own when you use <code>ecosystem.config.cjs</code> or <code>docker-compose.yml</code></strong>, which otherwise use a public placeholder.</td></tr>
+  <tr><td><code>CRON_SECRET</code></td><td>Secret for the cron URL and the worker. Without it, a random secret is stored in the database and shown in Admin → System. Vercel Cron sends it automatically. <strong>Required with <code>ecosystem.config.cjs</code> and <code>docker-compose.yml</code></strong> (the worker needs it). Use at least 12 random characters, e.g. <code>openssl rand -hex 24</code>; short values and the example value are ignored.</td></tr>
   <tr><td class="wrap"><code>WORKER_URL</code>, <code>WORKER_INTERVAL_SEC</code></td><td>Worker only: address of the app (default <code>SITE_URL</code>, else <code>http://localhost:$PORT</code>) and seconds between ticks (default 15, minimum 5).</td></tr>
   <tr><td><code>STORAGE_DIR</code></td><td>Folder for config, SQLite database and uploads.</td></tr>
   <tr><td class="wrap"><code>DB_DRIVER</code>, <code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_NAME</code>, <code>DB_USER</code>, <code>DB_PASSWORD</code>, <code>DB_FILE</code></td><td>Database connection (overrides <code>storage/config.json</code>). <code>DB_DRIVER</code> is <code>mysql</code> or <code>sqlite</code>.</td></tr>
