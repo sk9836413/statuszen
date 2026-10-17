@@ -34,7 +34,9 @@ export async function seedDemoMonitors(trx: Tx, options: { adminId: number; site
   const now = Date.now();
   const iso = (msAgo: number) => new Date(now - msAgo).toISOString();
   const created = iso(92 * DAY);
-  const ownUrl = /^https?:\/\//.test(options.siteUrl) ? options.siteUrl.replace(/\/$/, "") : "https://example.com";
+  // Local installs can't monitor themselves (private addresses are blocked), so use a public site there.
+  const local = /^https?:\/\/(localhost|127\.|10\.|192\.168\.|\[?::1)/i.test(options.siteUrl);
+  const ownUrl = /^https?:\/\//.test(options.siteUrl) && !local ? options.siteUrl.replace(/\/$/, "") : "https://example.com";
   const ownHost = new URL(ownUrl).hostname;
 
   const http = (url: string, extra: Record<string, unknown> = {}) => ({
