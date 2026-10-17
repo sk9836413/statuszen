@@ -105,6 +105,9 @@ export async function seedDemoMonitors(trx: Tx, options: { adminId: number; site
     ids.push(Number(result.insertId));
   }
 
+  const heartbeat = await trx.selectFrom("monitors").select("heartbeat_token").where("id", "=", ids[7]).executeTakeFirstOrThrow();
+  await trx.insertInto("settings").values({ key: "demo_heartbeat_token", value: heartbeat.heartbeat_token }).execute();
+
   // 90 days of daily summaries with the outages listed above.
   const daily: Insertable<MonitorDailyTable>[] = [];
   for (const [i, m] of monitors.entries()) {

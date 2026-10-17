@@ -58,14 +58,14 @@ export function PlanForm({ plan, currency }: { plan: EditablePlan; currency: str
             <Input id="max_status_pages" name="max_status_pages" type="number" min={0} max={100000} defaultValue={plan.maxStatusPages} required />
           </Field>
           <Field label="Shortest check interval (seconds)" htmlFor="min_interval_sec" hint="e.g. 300 = every 5 minutes, 60 = every minute, 30 = every 30 seconds." className="sm:col-span-2">
-            <Input id="min_interval_sec" name="min_interval_sec" type="number" min={10} max={86400} defaultValue={plan.minIntervalSec} required />
+            <Input id="min_interval_sec" name="min_interval_sec" type="number" min={30} max={86400} defaultValue={plan.minIntervalSec} required />
           </Field>
           <Field label="Features" htmlFor="features" hint="One per line. Shown with a tick on the pricing page." className="sm:col-span-2">
             <Textarea id="features" name="features" defaultValue={plan.features} rows={5} />
           </Field>
         </div>
         <div className="space-y-4 border-t border-line pt-6">
-          <Switch name="remove_branding" label="Remove branding" description='Hide the "Powered by" link in widgets.' defaultChecked={plan.removeBranding} />
+          <Switch name="remove_branding" label="Remove branding" description='Hide the "Powered by" link on status pages.' defaultChecked={plan.removeBranding} />
           <Switch name="is_featured" label="Recommended" description="Highlight this plan on the pricing page." defaultChecked={plan.isFeatured} />
           <Switch name="is_active" label="Show on pricing page" defaultChecked={plan.isActive} />
           <Switch

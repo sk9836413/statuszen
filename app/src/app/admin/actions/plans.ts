@@ -15,7 +15,7 @@ const planSchema = z.object({
   price_yearly: money,
   features: z.string().max(5000),
   max_monitors: z.coerce.number().int().min(0).max(100_000),
-  min_interval_sec: z.coerce.number().int().min(10, "The shortest interval is 10 seconds.").max(86_400),
+  min_interval_sec: z.coerce.number().int().min(30, "The shortest check interval is 30 seconds.").max(86_400),
   max_status_pages: z.coerce.number().int().min(0).max(100_000),
   sort_order: z.coerce.number().int().min(0).max(999),
 });

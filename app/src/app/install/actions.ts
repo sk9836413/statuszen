@@ -82,7 +82,7 @@ export async function runInstall(formData: FormData): Promise<InstallResult> {
   const site = z
     .object({
       site_name: z.string().trim().min(2, "Enter a site name.").max(80),
-      site_url: z.url("Enter the full site URL, e.g. https://proof.example.com").transform((v) => v.replace(/\/+$/, "")),
+      site_url: z.url("Enter the full site URL, e.g. https://status.example.com").transform((v) => v.replace(/\/+$/, "")),
       admin_name: z.string().trim().min(2, "Enter the admin name.").max(120),
       admin_email: z.email("Enter a valid admin email.").transform((v) => v.trim().toLowerCase()),
       admin_password: z.string().min(8, "The admin password must be at least 8 characters."),

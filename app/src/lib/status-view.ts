@@ -78,9 +78,16 @@ export const PENDING_SUBSCRIBER_TTL_MS = 7 * 86_400_000;
 // ── Pages ──
 
 /** A public page by slug (no cookies read, safe for cached API responses). */
+/** Pages of banned or deleted accounts are hidden from the public. */
+async function ownerActive(userId: number): Promise<boolean> {
+  const db = await getDb();
+  const owner = await db.selectFrom("users").select("status").where("id", "=", userId).executeTakeFirst();
+  return owner?.status === "active";
+}
+
 export async function getPublicStatusPage(slug: string): Promise<StatusPageRecord | undefined> {
   const page = await getStatusPageBySlug(String(slug ?? "").replace(/\.(svg|json|xml)$/i, ""));
-  return page?.isPublic ? page : undefined;
+  return page?.isPublic && (await ownerActive(page.userId)) ? page : undefined;
 }
 
 /**
@@ -90,7 +97,7 @@ export async function getPublicStatusPage(slug: string): Promise<StatusPageRecor
 export const getViewablePage = cache(async (slug: string): Promise<{ page: StatusPageRecord; preview: boolean } | null> => {
   const page = await getStatusPageBySlug(slug);
   if (!page) return null;
-  if (page.isPublic) return { page, preview: false };
+  if (page.isPublic && (await ownerActive(page.userId))) return { page, preview: false };
   const user = await getCurrentUser();
   if (user && (user.id === page.userId || user.role === "admin")) return { page, preview: true };
   return null;

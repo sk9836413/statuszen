@@ -7,7 +7,9 @@
  * Two processes: the web app and the check worker (runs due checks every 15 s).
  * Set the same CRON_SECRET for both (or copy it from Admin → System → Scheduler).
  */
-const CRON_SECRET = process.env.CRON_SECRET || "change-me-to-a-long-random-string";
+// Required: a long random string (the app ignores short or example values).
+const CRON_SECRET = process.env.CRON_SECRET || "";
+if (!CRON_SECRET) console.warn("[statuszen] Set CRON_SECRET before starting PM2, e.g. CRON_SECRET=$(openssl rand -hex 24) pm2 start ecosystem.config.cjs");
 
 module.exports = {
   apps: [

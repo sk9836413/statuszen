@@ -8,7 +8,7 @@ export async function sendDiscord(config: ChannelConfigByType["discord"], payloa
   if (!config.webhookUrl) return { ok: false, error: "No Discord webhook URL configured" };
   const t = describeAlert(payload, ctx.siteName);
   const body = {
-    username: ctx.siteName.slice(0, 80),
+    username: ctx.siteName.replace(/discord/gi, "").trim().slice(0, 80) || "Status alerts",
     allowed_mentions: { parse: [] },
     embeds: [
       {

@@ -13,7 +13,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
     .map((l) => l.slice("disallow:".length).trim())
     .filter(Boolean);
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: ["/admin", "/account", "/api/", "/checkout", "/dashboard", "/t/", "/embed/", "/widget-preview", ...extra] }],
+    rules: [{ userAgent: "*", allow: "/", disallow: ["/admin", "/account", "/api/", "/checkout", "/dashboard", "/badge/", ...extra] }],
     sitemap: absoluteUrl(settings, "/sitemap.xml"),
   };
 }

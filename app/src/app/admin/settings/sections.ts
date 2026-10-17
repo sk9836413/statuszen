@@ -37,7 +37,7 @@ export const SETTING_SECTIONS: SettingSection[] = [
     fields: [
       { key: "site_name", label: "Site name", type: "text" },
       { key: "site_tagline", label: "Tagline", type: "text" },
-      { key: "site_url", label: "Site URL", type: "url", hint: "Full address without a trailing slash, e.g. https://proof.example.com" },
+      { key: "site_url", label: "Site URL", type: "url", hint: "Full address without a trailing slash, e.g. https://status.example.com" },
       { key: "site_email", label: "Contact email", type: "email", hint: "Shown on the contact page and receives contact-form messages." },
       { key: "logo", label: "Logo", type: "image", hint: "PNG, SVG or WebP, about 160 × 40 px. Leave empty to show the site name.", group: "Branding" },
       { key: "logo_dark", label: "Logo for dark mode", type: "image", hint: "Optional light-coloured version of your logo.", group: "Branding" },
@@ -159,7 +159,7 @@ export const SETTING_SECTIONS: SettingSection[] = [
   {
     slug: "email",
     title: "Email",
-    description: "SMTP server used for password resets and contact-form notifications.",
+    description: "SMTP server used for email alerts, status page subscribers, password resets and contact-form notifications.",
     fields: [
       { key: "mail_enabled", label: "Send emails", type: "switch" },
       { key: "smtp_host", label: "SMTP host", type: "text", placeholder: "smtp.example.com" },

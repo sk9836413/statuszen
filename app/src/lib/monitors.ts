@@ -175,6 +175,14 @@ export async function deleteMonitor(monitorId: number): Promise<void> {
     for (const table of ["checks", "monitor_daily", "monitor_channels", "status_page_monitors", "incident_monitors"] as const) {
       await trx.deleteFrom(table).where("monitor_id", "=", monitorId).execute();
     }
+    const ts = now();
+    await trx
+      .updateTable("incidents")
+      .set({ status: "resolved", resolved_at: ts, updated_at: ts })
+      .where("monitor_id", "=", monitorId)
+      .where("kind", "=", "auto")
+      .where("resolved_at", "is", null)
+      .execute();
     await trx.updateTable("incidents").set({ monitor_id: null }).where("monitor_id", "=", monitorId).execute();
     await trx.updateTable("alert_log").set({ monitor_id: null }).where("monitor_id", "=", monitorId).execute();
     await trx.deleteFrom("monitors").where("id", "=", monitorId).execute();

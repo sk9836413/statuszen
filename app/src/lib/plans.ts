@@ -47,19 +47,19 @@ function fromPlan(plan: Plan): Pick<Entitlements, "maxMonitors" | "maxStatusPage
   return {
     maxMonitors: plan.max_monitors,
     maxStatusPages: plan.max_status_pages,
-    minIntervalSec: Math.max(10, plan.min_interval_sec),
+    minIntervalSec: Math.max(30, plan.min_interval_sec),
     removeBranding: plan.remove_branding === 1,
   };
 }
 
 export async function getEntitlements(user: Pick<SessionUser, "role" | "plan_id" | "plan_expires_at"> | null): Promise<Entitlements> {
-  if (user && hasActivePaidPlan(user)) {
-    const plan = await getPlan(user.plan_id!);
-    if (plan && !plan.is_free) return { plan, isPremium: true, ...fromPlan(plan), expiresAt: user.plan_expires_at };
-  }
   // Administrators run the platform, so their own monitors are never limited.
   if (user?.role === "admin") {
     return { plan: null, isPremium: true, maxMonitors: 0, maxStatusPages: 0, minIntervalSec: 30, removeBranding: true, expiresAt: null };
+  }
+  if (user && hasActivePaidPlan(user)) {
+    const plan = await getPlan(user.plan_id!);
+    if (plan && !plan.is_free) return { plan, isPremium: true, ...fromPlan(plan), expiresAt: user.plan_expires_at };
   }
   const free = await getFreePlan();
   return {

@@ -1,0 +1,1280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Statuszen Documentation – Uptime Monitoring, Status Pages &amp; Cron Monitoring SaaS (Next.js)</title>
+<style>
+  :root { --primary:#1d5bd8; --primary-soft:#e8effc; --ink:#141a2b; --muted:#5a6275; --line:#dfe4ee; --paper:#f6f8fb; --surface:#fff; --marker:#22c55e; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  body { margin:0; font: 16px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; color:var(--ink); background:var(--paper); }
+  a { color:var(--primary); }
+  code, pre, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .9em; }
+  code { background:var(--primary-soft); padding:.1em .35em; border-radius:4px; overflow-wrap:anywhere; }
+  pre { background:#141a2b; color:#e8ecf6; padding:16px; border-radius:10px; overflow-x:auto; line-height:1.5; }
+  pre code { background:none; padding:0; color:inherit; overflow-wrap:normal; }
+  .layout { display:grid; grid-template-columns: 270px 1fr; min-height:100vh; }
+  nav.toc { position:sticky; top:0; height:100vh; overflow-y:auto; background:var(--surface); border-right:1px solid var(--line); padding:24px 18px; }
+  nav.toc .brand { display:flex; align-items:center; gap:10px; font-weight:800; font-size:20px; margin-bottom:6px; }
+  nav.toc .brand span.mark { width:30px; height:30px; border-radius:9px; background:var(--primary); position:relative; display:inline-block; }
+  nav.toc .brand span.mark::after { content:""; position:absolute; right:6px; top:6px; width:9px; height:9px; border-radius:50%; background:var(--marker); }
+  nav.toc .version { color:var(--muted); font-size:13px; margin:0 0 18px; }
+  nav.toc ol { list-style:none; margin:0; padding:0; }
+  nav.toc li a { display:block; padding:5px 10px; border-radius:6px; color:var(--ink); text-decoration:none; font-size:14px; }
+  nav.toc li a:hover { background:var(--primary-soft); }
+  nav.toc li.sub a { padding-left:24px; color:var(--muted); font-size:13px; }
+  main { padding:40px 56px 80px; max-width:1000px; min-width:0; }
+  h1 { font-size:40px; line-height:1.15; margin:0 0 12px; letter-spacing:-.02em; }
+  h2 { font-size:28px; margin:56px 0 12px; padding-top:8px; border-top:1px solid var(--line); letter-spacing:-.01em; }
+  h3 { font-size:20px; margin:32px 0 8px; }
+  h4 { font-size:17px; margin:22px 0 6px; }
+  p, li { max-width:78ch; }
+  .lead { font-size:19px; color:var(--muted); }
+  .card { background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:18px 22px; margin:18px 0; }
+  .note { border-left:4px solid var(--primary); background:var(--primary-soft); padding:12px 16px; border-radius:6px; margin:16px 0; }
+  .warn { border-left:4px solid #c98a00; background:#fbf3dc; padding:12px 16px; border-radius:6px; margin:16px 0; }
+  .note p, .warn p { margin:.3em 0; }
+  table { border-collapse:collapse; width:100%; margin:14px 0; background:var(--surface); font-size:15px; }
+  th, td { border:1px solid var(--line); padding:8px 12px; text-align:left; vertical-align:top; }
+  th { background:#eef2f9; }
+  td code { white-space:nowrap; }
+  td.wrap code { white-space:normal; }
+  ol.steps > li { margin-bottom:10px; }
+  .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:12px; }
+  .grid .card { margin:0; }
+  .tag { display:inline-block; background:var(--marker); color:#053d1c; font-size:12px; font-weight:700; padding:1px 7px; border-radius:5px; vertical-align:middle; }
+  .box { border:1px solid var(--line); border-radius:12px; background:var(--surface); padding:4px 22px 14px; margin:18px 0; }
+  .box h4 { margin-top:16px; }
+  .muted { color:var(--muted); }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } nav.toc { position:static; height:auto; } main { padding:24px 20px 60px; } td code { white-space:normal; } }
+  @media print { nav.toc { display:none; } .layout { display:block; } main { max-width:none; padding:0; } }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Contents">
+  <div class="brand"><span class="mark"></span>Statuszen</div>
+  <p class="version">Documentation · version 1.0.0</p>
+  <ol>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#requirements">Requirements</a></li>
+    <li><a href="#package">Package contents</a></li>
+    <li><a href="#install">Installation</a></li>
+    <li class="sub"><a href="#install-cpanel">cPanel / shared hosting</a></li>
+    <li class="sub"><a href="#install-vps">VPS (PM2 + Nginx)</a></li>
+    <li class="sub"><a href="#install-docker">Docker</a></li>
+    <li class="sub"><a href="#install-vercel">Vercel + cloud MySQL</a></li>
+    <li class="sub"><a href="#install-local">Local computer</a></li>
+    <li class="sub"><a href="#installer">Web installer</a></li>
+    <li class="sub"><a href="#first-steps">First steps</a></li>
+    <li><a href="#scheduling">Scheduling checks</a></li>
+    <li class="sub"><a href="#sched-how">How it works</a></li>
+    <li class="sub"><a href="#sched-secret">The cron secret</a></li>
+    <li class="sub"><a href="#sched-lazy">Lazy mode</a></li>
+    <li class="sub"><a href="#sched-cron">Cron URL</a></li>
+    <li class="sub"><a href="#sched-worker">Worker</a></li>
+    <li class="sub"><a href="#sched-vercel">Vercel &amp; serverless</a></li>
+    <li class="sub"><a href="#sched-which">Which one to use</a></li>
+    <li><a href="#admin">Admin panel</a></li>
+    <li class="sub"><a href="#admin-dashboard">Dashboard</a></li>
+    <li class="sub"><a href="#admin-users">Users</a></li>
+    <li class="sub"><a href="#admin-monitors">Monitors</a></li>
+    <li class="sub"><a href="#admin-plans">Plans &amp; limits</a></li>
+    <li class="sub"><a href="#admin-payments">Payments</a></li>
+    <li class="sub"><a href="#admin-pages">Pages &amp; messages</a></li>
+    <li class="sub"><a href="#admin-blog">Blog</a></li>
+    <li class="sub"><a href="#admin-languages">Languages</a></li>
+    <li class="sub"><a href="#admin-settings">Settings</a></li>
+    <li class="sub"><a href="#admin-system">System &amp; scheduler</a></li>
+    <li><a href="#customer">Customer guide</a></li>
+    <li class="sub"><a href="#c-monitors">Monitor types</a></li>
+    <li class="sub"><a href="#c-schedule">Intervals &amp; confirmations</a></li>
+    <li class="sub"><a href="#c-test">Test now / Check now</a></li>
+    <li class="sub"><a href="#c-heartbeat">Heartbeat (cron) monitoring</a></li>
+    <li class="sub"><a href="#c-channels">Alert channels</a></li>
+    <li class="sub"><a href="#c-webhook">Webhook payload &amp; HMAC</a></li>
+    <li class="sub"><a href="#c-incidents">Incidents</a></li>
+    <li class="sub"><a href="#c-maintenance">Maintenance windows</a></li>
+    <li class="sub"><a href="#c-pages">Status pages</a></li>
+    <li class="sub"><a href="#c-subscribers">Subscribers</a></li>
+    <li class="sub"><a href="#c-badges">Badges</a></li>
+    <li class="sub"><a href="#c-widget">Status widget (sz.js)</a></li>
+    <li class="sub"><a href="#c-api">JSON API</a></li>
+    <li><a href="#payments">Payment gateways</a></li>
+    <li><a href="#email">Email (SMTP)</a></li>
+    <li><a href="#i18n">Languages &amp; RTL</a></li>
+    <li><a href="#seo">SEO</a></li>
+    <li><a href="#privacy">Privacy &amp; security</a></li>
+    <li><a href="#performance">Performance &amp; limits</a></li>
+    <li><a href="#customize">Customisation</a></li>
+    <li><a href="#demo">Demo mode</a></li>
+    <li><a href="#update">Updating</a></li>
+    <li><a href="#env">Environment variables</a></li>
+    <li><a href="#troubleshooting">Troubleshooting</a></li>
+    <li><a href="#credits">Credits</a></li>
+    <li><a href="#changelog">Changelog</a></li>
+    <li><a href="#support">Support</a></li>
+  </ol>
+</nav>
+
+<main>
+<h1>Statuszen</h1>
+<p class="lead">Uptime monitoring, public status pages and cron job (heartbeat) monitoring as a service, built with Next.js 16, React 19 and Tailwind CSS 4. Thank you for your purchase! This guide takes you from download to a live platform with paying customers.</p>
+<div class="card">
+  <strong>Quick start:</strong> upload the <code>statuszen</code> folder, run <code>npm install</code> and <code>npm run build</code>, start the app, then open your domain in a browser. The web installer does the rest. Then read <a href="#scheduling">Scheduling checks</a>: it decides how often your monitors are really checked.
+</div>
+
+<!-- ───────────────────────────── Introduction ───────────────────────────── -->
+<h2 id="introduction">Introduction</h2>
+<p>Statuszen lets you run your own uptime monitoring service, like the well-known paid services. Your customers sign up and add <strong>monitors</strong>: websites and APIs (HTTP), keywords on a page, TCP ports, SSL certificates, domain expiry dates, DNS records and cron jobs (heartbeats). Your server checks them on a schedule. When something goes down, the customer is alerted by <strong>email, Slack, Discord, Microsoft Teams, Telegram or a signed webhook</strong>, and an incident opens automatically.</p>
+<p>Customers can publish branded <strong>status pages</strong> with 90 days of uptime history, incident updates and planned maintenance. Visitors can subscribe by email (double opt-in), follow an Atom feed, and customers can show the status on their own websites with an SVG <strong>badge</strong>, a tiny <strong>status widget</strong> (<code>sz.js</code>, about 2 KB gzipped) or the public <strong>JSON API</strong>.</p>
+<p>You earn money with <strong>paid plans</strong>. Plans limit the number of monitors and status pages, set the fastest check interval, and can remove the “Powered by” line from status pages. Payments are accepted through Stripe (automatic renewal), PayPal, Razorpay or manual bank transfer.</p>
+<div class="note">Words used in this guide: <strong>you</strong> or <strong>the administrator</strong> run the platform. <strong>Customers</strong> are the people who sign up on your platform and create monitors. <strong>Visitors</strong> are the people who open your customers' status pages.</div>
+<div class="note">All checks run <strong>from your own server</strong>, from one location. There is no network of probe servers in several countries. If your server loses its internet connection, monitors can't be checked during that time.</div>
+
+<!-- ───────────────────────────── Features ───────────────────────────── -->
+<h2 id="features">Features</h2>
+<div class="grid">
+  <div class="card"><strong>7 monitor types</strong><br>Website (HTTP), keyword, TCP port, SSL certificate, domain expiry (RDAP), DNS record and cron/heartbeat.</div>
+  <div class="card"><strong>Flexible HTTP checks</strong><br>Any method, custom headers and body, accepted status codes, timeouts, redirects, maximum response time, basic auth.</div>
+  <div class="card"><strong>Heartbeat monitoring</strong><br>A secret ping URL per job, with <code>/start</code> and <code>/fail</code>, run-time tracking and a grace period. Copy-paste snippets.</div>
+  <div class="card"><strong>6 alert channels</strong><br>Email, webhook (HMAC-SHA256 signed), Slack, Discord, Microsoft Teams, Telegram. Send a test with one click.</div>
+  <div class="card"><strong>No false alarms</strong><br>1–5 confirmations before an alert, quick rechecks after a failure, hourly “still down” reminders, recovery alerts with downtime.</div>
+  <div class="card"><strong>Expiry warnings</strong><br>Alerts before SSL certificates and domain registrations expire, days before you choose.</div>
+  <div class="card"><strong>Incidents</strong><br>Opened and resolved automatically, plus manual incidents with status updates and impact levels.</div>
+  <div class="card"><strong>Maintenance windows</strong><br>Planned downtime shown on status pages; alerts muted; downtime not counted.</div>
+  <div class="card"><strong>Status pages</strong><br>Logo, theme, accent colour, groups, 30/60/90-day uptime bars, response times, announcement, incident history, Atom feed.</div>
+  <div class="card"><strong>Subscribers</strong><br>Double opt-in email subscriptions with one-click unsubscribe and CSV export.</div>
+  <div class="card"><strong>Badges, widget, API</strong><br>Status and uptime SVG badges, a 2 KB status widget, and a public JSON endpoint with CORS.</div>
+  <div class="card"><strong>Three schedulers</strong><br>Works without cron (lazy mode), with a cron URL every minute, or with a worker every 15 seconds.</div>
+  <div class="card"><strong>Plans &amp; billing</strong><br>Monitor and status page limits, fastest interval, branding removal. Stripe, PayPal, Razorpay, bank transfer.</div>
+  <div class="card"><strong>Admin panel</strong><br>Revenue, checks per day, monitors down, users, all monitors, plans, payments, pages, blog, languages, scheduler health.</div>
+  <div class="card"><strong>Multi-language &amp; RTL</strong><br>Translate the public site, status pages and the customer dashboard. Right-to-left languages are supported.</div>
+  <div class="card"><strong>Secure</strong><br>SSRF protection for every check and webhook, scrypt passwords, HTTP-only sessions, rate limits, web installer with MySQL or SQLite.</div>
+</div>
+
+<!-- ───────────────────────────── Requirements ───────────────────────────── -->
+<h2 id="requirements">Requirements</h2>
+<table>
+  <tr><th>Item</th><th>Requirement</th></tr>
+  <tr><td>Node.js</td><td>20.9 or newer (22 LTS recommended). Node.js <strong>22.13+</strong> is needed only for the SQLite database option.</td></tr>
+  <tr><td>Database</td><td>MySQL 5.7+ / MariaDB 10.3+ (recommended for production), <em>or</em> the built-in SQLite option (no database server needed).</td></tr>
+  <tr><td>Hosting</td><td>Any host that runs Node.js apps: a VPS, cPanel with “Setup Node.js App”, Plesk, Docker, Railway, Render, etc. A VPS is best for monitoring, because it can run the <a href="#sched-worker">worker</a>.</td></tr>
+  <tr><td>A way to run checks</td><td>A cron job that opens a URL every minute, or the worker process, or lazy mode (default, needs regular visits). See <a href="#scheduling">Scheduling checks</a>.</td></tr>
+  <tr><td>HTTPS</td><td><strong>Required in production.</strong> Status pages, the badge and the <code>sz.js</code> widget are embedded on your customers' HTTPS websites; browsers block plain HTTP there. Use a free Let's Encrypt certificate.</td></tr>
+  <tr><td>Outbound internet</td><td>Your server must be able to reach the internet: HTTP(S) and any TCP port your customers monitor; DNS (port 53, UDP and TCP) to <code>1.1.1.1</code> and <code>8.8.8.8</code> for DNS monitors; HTTPS to <code>data.iana.org</code> and the domain registries for domain monitors; HTTPS to Slack, Discord, Teams and <code>api.telegram.org</code> for alerts; SMTP (587 or 465) for email. Many shared hosts block outgoing ports other than 80 and 443 — TCP monitors on other ports then always fail.</td></tr>
+  <tr><td>Memory</td><td>At least 1 GB RAM to build (<code>npm run build</code>). Running the platform needs about 200–300 MB, plus about 50 MB for the worker.</td></tr>
+  <tr><td>Writable folder</td><td>The <code>storage</code> folder must be writable (configuration, SQLite database, uploaded logos).</td></tr>
+</table>
+<div class="note">Static-only hosting (plain HTML hosting, GitHub Pages) cannot run Statuszen: checks, alerts, accounts and payments need a Node.js server.</div>
+
+<!-- ───────────────────────────── Package ───────────────────────────── -->
+<h2 id="package">Package contents</h2>
+<pre><code>Statuszen-1.0.0/
+├── documentation/            This guide
+└── statuszen/                The application source code
+    ├── src/
+    │   ├── app/              Pages, admin panel, customer dashboard, status pages, API routes
+    │   ├── components/       Shared UI, dashboard and status page components
+    │   ├── monitor/          The monitor contract: types, defaults, validation
+    │   ├── lib/              Server code: database, scheduler, plans, payments, email
+    │   │   ├── checks/       The check engine (HTTP, TCP, SSL, domain, DNS)
+    │   │   └── alerts/       Alert channels (email, webhook, Slack, Discord, Teams, Telegram)
+    │   └── status-widget/    Source of the status widget sz.js
+    ├── scripts/
+    │   ├── build-widget.mjs  Builds public/sz.js (runs automatically with npm run build)
+    │   └── worker.mjs        The check worker (npm run worker)
+    ├── public/               Public static files (sz.js is generated here)
+    ├── storage/              Created data: config.json, SQLite database, uploads
+    ├── server.js             Start file for cPanel / Passenger / PM2
+    ├── ecosystem.config.cjs  PM2 configuration (app + worker)
+    ├── Dockerfile, docker-compose.yml
+    ├── .env.example          Optional environment variables
+    ├── README.md             Short developer notes
+    └── package.json</code></pre>
+<div class="note"><code>public/sz.js</code>, the status widget your customers embed, is <strong>not</strong> in the package. It is built from <code>src/status-widget</code> every time you run <code>npm run build</code> (or <code>npm run dev</code>). If you ever see a 404 for <code>/sz.js</code>, run <code>npm run build</code> again and restart.</div>
+
+<!-- ───────────────────────────── Install ───────────────────────────── -->
+<h2 id="install">Installation</h2>
+<p>Pick the guide that matches your hosting. Every method ends with the <a href="#installer">web installer</a>, and every method needs a way to run checks: read <a href="#scheduling">Scheduling checks</a> right after installing.</p>
+<div class="note">Install Statuszen on its own domain or subdomain, for example <code>https://uptime.example.com</code>. Status pages live at <code>https://uptime.example.com/s/&lt;page&gt;</code>, and heartbeat ping URLs, badges and widget snippets all contain this address. Changing it later means every customer must update their cron jobs and snippets.</div>
+
+<h3 id="install-cpanel">cPanel / shared hosting (Setup Node.js App)</h3>
+<ol class="steps">
+  <li>In cPanel open <strong>MySQL® Databases</strong>. Create a database and a user, then add the user to the database with <em>All privileges</em>. Write down the database name, username and password.</li>
+  <li>Create the subdomain (e.g. <code>uptime.example.com</code>) in <strong>Domains</strong> and turn on <strong>SSL/TLS Status → Run AutoSSL</strong> so it has HTTPS.</li>
+  <li>Open <strong>File Manager</strong> and upload <code>statuszen.zip</code> (the <code>statuszen</code> folder from the package, zipped) to your home folder, e.g. <code>/home/youruser/statuszen</code>, and extract it. Do <em>not</em> put it inside <code>public_html</code>.</li>
+  <li>Open <strong>Setup Node.js App</strong> → <strong>Create Application</strong>:
+    <ul>
+      <li>Node.js version: the newest available (22.x recommended)</li>
+      <li>Application mode: <code>Production</code></li>
+      <li>Application root: <code>statuszen</code></li>
+      <li>Application URL: your domain or subdomain</li>
+      <li>Application startup file: <code>server.js</code></li>
+    </ul>
+    Click <strong>Create</strong>.</li>
+  <li>Click <strong>Run NPM Install</strong> and wait until it finishes.</li>
+  <li>Copy the command shown at the top of the page (it looks like <code>source /home/youruser/nodevenv/statuszen/22/bin/activate &amp;&amp; cd /home/youruser/statuszen</code>). Open <strong>Terminal</strong> in cPanel, paste it, then run:
+    <pre><code>npm run build</code></pre>
+    The build takes 1–4 minutes. It first prints <code>[widget] public/sz.js … gzip</code> (the status widget), then builds the app.</li>
+  <li>Back in Setup Node.js App, click <strong>Restart</strong>. Open your domain: you will see the installer.</li>
+  <li>After installing, add the <strong>cron job</strong> from Admin → System (see <a href="#sched-cron">Cron URL</a>). On cPanel this is strongly recommended: Passenger stops idle apps, and a stopped app can't check anything.</li>
+</ol>
+<p><code>server.js</code> starts the built Next.js app, which serves everything: pages, the API and the files in <code>public</code>, including <code>/sz.js</code>. You don't need to copy anything into <code>public_html</code>.</p>
+<div class="warn">If the build stops with “JavaScript heap out of memory” your plan limits memory. Build on your own computer instead (<code>npm install &amp;&amp; npm run build</code>), then upload the whole folder <em>including</em> the <code>.next</code> folder and <code>public/sz.js</code>, and only run “Run NPM Install” + “Restart” on the server.</div>
+
+<h3 id="install-vps">VPS (Ubuntu) with PM2 and Nginx</h3>
+<ol class="steps">
+  <li>Install Node.js 22, Nginx and PM2:
+<pre><code>curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt install -y nodejs nginx
+sudo npm install -g pm2</code></pre></li>
+  <li>Install MySQL (or use SQLite and skip this step):
+<pre><code>sudo apt install -y mysql-server
+sudo mysql -e "CREATE DATABASE statuszen CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'statuszen'@'localhost' IDENTIFIED BY 'choose-a-strong-password';
+GRANT ALL PRIVILEGES ON statuszen.* TO 'statuszen'@'localhost'; FLUSH PRIVILEGES;"</code></pre></li>
+  <li>Upload the <code>statuszen</code> folder to <code>/var/www/statuszen</code>, then build:
+<pre><code>cd /var/www/statuszen
+npm ci
+npm run build</code></pre></li>
+  <li>Choose a <strong>cron secret</strong> and start the app <em>and</em> the check worker with PM2. <code>ecosystem.config.cjs</code> starts two processes: <code>statuszen</code> (the web app) and <code>statuszen-worker</code> (runs due checks every 15 seconds). Both get the same <code>CRON_SECRET</code>:
+<pre><code>export CRON_SECRET="$(openssl rand -hex 24)"
+echo "$CRON_SECRET"          # keep a copy
+pm2 start ecosystem.config.cjs
+pm2 save &amp;&amp; pm2 startup</code></pre>
+    <div class="warn"><p><strong>Always set your own <code>CRON_SECRET</code>.</strong> When it is not set in the shell that runs <code>pm2 start</code>, <code>ecosystem.config.cjs</code> falls back to the placeholder <code>change-me-to-a-long-random-string</code>, which is public. Everything still works, but anyone could call your cron URL. A <code>CRON_SECRET</code> line in <code>.env.local</code> does <em>not</em> help here, because PM2 passes the placeholder to both processes and an existing environment variable wins over <code>.env</code> files. Either export the variable before <code>pm2 start</code> (as above) or write your secret into <code>ecosystem.config.cjs</code>. After changing it run <code>pm2 restart ecosystem.config.cjs --update-env</code>.</p></div></li>
+  <li>Create <code>/etc/nginx/sites-available/statuszen</code>:
+<pre><code>server {
+    listen 80;
+    server_name uptime.example.com;
+    client_max_body_size 10m;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}</code></pre>
+Enable it and add a free SSL certificate:
+<pre><code>sudo ln -s /etc/nginx/sites-available/statuszen /etc/nginx/sites-enabled/
+sudo nginx -t &amp;&amp; sudo systemctl reload nginx
+sudo apt install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d uptime.example.com</code></pre></li>
+  <li>Open <code>https://uptime.example.com</code> to run the installer. Afterwards, Admin → System → Scheduler should show <em>Running</em> with the source <code>worker</code> within a minute.</li>
+</ol>
+<div class="note">Keep <code>instances: 1</code> for the web app in <code>ecosystem.config.cjs</code>. Rate limits and some caches are kept in memory, per process. One Node.js process handles a lot of monitors (see <a href="#performance">Performance</a>). The worker calls <code>http://localhost:3000</code> by default; set <code>WORKER_URL</code> if the app listens elsewhere.</div>
+
+<h3 id="install-docker">Docker</h3>
+<p>The package includes a <code>Dockerfile</code> and a <code>docker-compose.yml</code> with three services: <code>app</code> (the web app), <code>worker</code> (runs checks every 15 seconds) and <code>db</code> (MySQL 8.4). First create a file named <code>.env</code> next to <code>docker-compose.yml</code> with your own secret:</p>
+<pre><code>CRON_SECRET=paste-a-long-random-string-here</code></pre>
+<p>Then start everything:</p>
+<pre><code>cd statuszen
+docker compose up -d --build</code></pre>
+<p>Open <code>http://your-server:3000</code>. In the installer choose MySQL with host <code>db</code>, port <code>3306</code>, database <code>statuszen</code>, user <code>statuszen</code>, password <code>statuszen</code> (change these and <code>MYSQL_ROOT_PASSWORD</code> in <code>docker-compose.yml</code> first). The <code>storage</code> folder is kept in a Docker volume. Put Nginx, Caddy or Traefik with HTTPS in front of port 3000.</p>
+<div class="warn">Without the <code>.env</code> file, <code>docker-compose.yml</code> uses the public placeholder <code>change-me-to-a-long-random-string</code> as the cron secret. Set your own. Build the image from a clean copy of the package (without a local <code>node_modules</code> or <code>.next</code> folder): the Dockerfile copies the whole folder into the build.</div>
+<p>Without Compose:</p>
+<pre><code>docker build -t statuszen .
+docker network create statuszen-net
+docker run -d --name statuszen --network statuszen-net -p 3000:3000 \
+  -e CRON_SECRET=your-secret -v statuszen-storage:/app/storage statuszen
+docker run -d --name statuszen-worker --network statuszen-net \
+  -e WORKER_URL=http://statuszen:3000 -e CRON_SECRET=your-secret statuszen node scripts/worker.mjs</code></pre>
+
+<h3 id="install-vercel">Vercel (with a cloud MySQL database)</h3>
+<p>Vercel has no permanent disk, so the web installer and SQLite can't be used there. Instead, Statuszen is configured with environment variables and a cloud MySQL-compatible database such as <strong>TiDB Cloud Serverless</strong> (free tier), Aiven or PlanetScale.</p>
+<ol class="steps">
+  <li>Create a database. In TiDB Cloud: create a <em>Serverless</em> cluster in the region closest to your Vercel functions, open <strong>Connect</strong>, generate a password and note the host, port (4000), user and password. In the SQL editor run <code>CREATE DATABASE statuszen;</code></li>
+  <li>Push the <code>statuszen</code> folder to a GitHub repository (keep it private).</li>
+  <li>In Vercel click <strong>Add New → Project</strong>, import the repository and set <strong>Root Directory</strong> to the folder that contains <code>package.json</code>. Keep the default build command (<code>npm run build</code>): it also builds <code>sz.js</code>.</li>
+  <li>Add these <strong>Environment Variables</strong>:
+<pre><code>DB_DRIVER=mysql
+DB_HOST=gateway01.ap-southeast-1.prod.aws.tidbcloud.com
+DB_PORT=4000
+DB_USER=xxxxxxxx.root
+DB_PASSWORD=your-password
+DB_NAME=statuszen
+DB_SSL=true
+APP_INSTALLED=true
+ADMIN_EMAIL=you@example.com
+ADMIN_PASSWORD=a-strong-password
+ADMIN_NAME=Your Name
+SITE_URL=https://uptime.example.com
+CRON_SECRET=a-long-random-string</code></pre></li>
+  <li>Click <strong>Deploy</strong>. Tables are created automatically on the first visit and the administrator account is created from <code>ADMIN_EMAIL</code> / <code>ADMIN_PASSWORD</code>.</li>
+  <li>Add your domain in <strong>Settings → Domains</strong>, and set the same address in Admin → Settings → General → <em>Site URL</em>.</li>
+  <li>In Vercel open <strong>Settings → Functions</strong> and choose the region closest to your database.</li>
+  <li><strong>Set up the scheduler</strong> as described in <a href="#sched-vercel">Vercel &amp; serverless</a>. This step is not optional on Vercel.</li>
+</ol>
+<div class="warn">
+  <p>Vercel is fine for a demo or a small platform, but a VPS is recommended for a monitoring service:</p>
+  <ul>
+    <li>There is no worker process, so checks depend on an external cron service calling the cron URL (at best once a minute).</li>
+    <li>Uploaded files are not kept (no permanent disk). Paste image URLs for your logo, favicon and status page logos instead of uploading.</li>
+    <li>Rate limits are kept per serverless instance.</li>
+  </ul>
+</div>
+
+<h3 id="install-local">Local computer (for testing or customising)</h3>
+<pre><code>cd statuszen
+npm install
+npm run dev</code></pre>
+<p>Open <code>http://localhost:3000</code> and choose <strong>SQLite</strong> in the installer. Lazy mode is on by default, so checks run while you click around. To run checks without visiting pages, start the worker in a second terminal (copy the secret from Admin → System → Scheduler):</p>
+<pre><code>CRON_SECRET=the-secret-from-admin npm run worker</code></pre>
+<p>On Windows PowerShell: <code>$env:CRON_SECRET="the-secret"; npm run worker</code>.</p>
+<div class="note">Monitors can't point at <code>localhost</code> or private IP addresses (see <a href="#privacy">SSRF protection</a>). To monitor services on your own network, turn on <em>Admin → Settings → Monitoring → Allow private network addresses</em>.</div>
+
+<h3 id="installer">Web installer</h3>
+<ol class="steps">
+  <li><strong>Requirements</strong> – checks the Node.js version and that <code>storage</code> is writable.</li>
+  <li><strong>Database</strong> – choose MySQL/MariaDB (host, port, database, user, password, and <em>Use SSL</em> for cloud databases) or SQLite. Click <em>Test connection</em>, then <em>Continue</em>.</li>
+  <li><strong>Site &amp; admin</strong> – enter your platform name, the full site URL (e.g. <code>https://uptime.example.com</code>) and the administrator account. Click <em>Install now</em>.</li>
+</ol>
+<p>The installer creates all tables, the three default plans (Free, Pro, Agency), the About, Privacy policy and Terms of service pages and three starter blog posts. It writes <code>storage/config.json</code> and locks itself (<code>storage/installed.lock</code>). Sign in at <code>/login</code>. The admin panel is at <code>/admin</code>, the customer dashboard at <code>/dashboard</code>.</p>
+<div class="note">To run the installer again (e.g. to switch databases), delete <code>storage/installed.lock</code> and <code>storage/config.json</code> and restart the app. Existing data in the old database is not deleted.</div>
+
+<h3 id="first-steps">First steps after installing</h3>
+<p>The admin dashboard shows a <em>Finish setting up</em> checklist. In short:</p>
+<ol class="steps">
+  <li><strong>Settings → General</strong>: check the <em>Site URL</em>. It must be your public <code>https://</code> address: alert links, ping URLs, status page links in emails and the cron URL are built from it. Add your logo and contact email.</li>
+  <li><strong>Admin → System → Scheduler</strong>: set up the cron URL or the worker (see <a href="#scheduling">Scheduling checks</a>) and check that the badge says <em>Running</em>.</li>
+  <li><strong>Settings → Email</strong>: configure SMTP. Email alerts, status page subscriptions and password resets need it.</li>
+  <li><strong>Settings → Monitoring</strong>: set the branding text shown on free status pages, e.g. “Powered by YourBrand”.</li>
+  <li><strong>Plans</strong>: adjust prices and limits. <strong>Settings → Payments</strong>: connect at least one payment gateway.</li>
+  <li>Open <strong>/dashboard</strong>, add a monitor for your own platform, create an alert channel and a status page. Then show it on your home page with <em>Settings → Monitoring → Status page on your home page</em>.</li>
+</ol>
+
+<!-- ───────────────────────────── Scheduling ───────────────────────────── -->
+<h2 id="scheduling">Scheduling checks</h2>
+<p>A monitoring service is only as good as its scheduler. This chapter explains exactly how checks are started and which method you should use. <strong>Read it before you invite customers.</strong></p>
+
+<h3 id="sched-how">How it works</h3>
+<p>Every monitor has a <em>next check</em> time. A <strong>tick</strong> looks for monitors that are due, checks them (10 at a time, up to 200 per tick), stores the results, sends alerts, evaluates heartbeat monitors, moves maintenance windows along and, once a day, deletes old check results. A lock in the database makes sure two ticks never run at the same time.</p>
+<p>Statuszen itself does not keep a timer running inside the web app. Something must start a tick. There are four ways:</p>
+<table>
+  <tr><th>Method</th><th>How often</th><th>Best for</th></tr>
+  <tr><td><strong>Lazy mode</strong> (on by default)</td><td>When the app serves a page and no tick ran for a minute. At most about once a minute, and <em>only while people use the site</em>.</td><td>Trying Statuszen; very small sites.</td></tr>
+  <tr><td><strong>Cron URL</strong></td><td>Every time the URL is opened. Usually every minute.</td><td>cPanel, shared hosting, Vercel (with an external cron service).</td></tr>
+  <tr><td><strong>Worker</strong> (<code>npm run worker</code>)</td><td>Every 15 seconds.</td><td>VPS and Docker. Needed for 30-second intervals.</td></tr>
+  <tr><td><strong>Run checks now</strong></td><td>When you click the button in Admin → System.</td><td>Testing.</td></tr>
+</table>
+<p>The methods can be combined safely. A tick started while another is running simply does nothing.</p>
+
+<h3 id="sched-secret">The cron secret</h3>
+<p>The cron URL and the worker are protected by a secret:</p>
+<ul>
+  <li>If the environment variable <code>CRON_SECRET</code> is set, that value is the secret.</li>
+  <li>Otherwise Statuszen creates a random secret the first time it is needed and stores it in the database.</li>
+</ul>
+<p>To see it, open <strong>Admin → System</strong>. The <strong>Scheduler</strong> card shows the complete <em>Cron URL</em> (with a Copy button) and a ready-made cron line. Click <strong>New secret</strong> to replace a stored secret, e.g. if it leaked; the old URL stops working immediately, so update your cron job and worker. The button is hidden while the secret comes from <code>CRON_SECRET</code>: change the environment variable instead and restart.</p>
+<p>The secret can be sent in two ways:</p>
+<pre><code>curl -fsS "https://uptime.example.com/api/cron/tick?key=YOUR-SECRET"
+curl -fsS -H "Authorization: Bearer YOUR-SECRET" https://uptime.example.com/api/cron/tick</code></pre>
+<p>GET and POST both work. A correct call answers with a JSON summary, for example <code>{"source":"cron","checked":12,"down":0,"recovered":1,"alertsSent":1,"deferred":0,"durationMs":2140,"skippedLocked":false}</code>. A wrong or missing secret answers <code>401</code>. More than 30 calls per minute from one IP address answer <code>429</code>.</p>
+
+<h3 id="sched-lazy">Lazy mode (default, no setup)</h3>
+<p>With <em>Settings → Monitoring → Run checks on visits</em> switched on, the app runs due checks <strong>after</strong> it has answered a request, whenever no tick ran during the last minute. Pages of the public site, the dashboard, the admin panel, status pages, the status JSON API and status page badges all trigger it. The visitor never waits. A lazy tick has an 8-second time budget; what doesn't fit is checked by the next tick.</p>
+<div class="warn">Lazy mode only works while people use your site. At night, or on a new platform without traffic, nothing is checked, heartbeat monitors are not evaluated and nobody is alerted. On cPanel, Passenger also stops the app after a period without visits. Use it to get started, then add the cron URL or the worker. You can leave lazy mode on as a backup: it does nothing while cron or the worker keep ticks fresh.</div>
+
+<h3 id="sched-cron">Cron URL (every minute)</h3>
+<p>Open the URL every minute from any scheduler. Copy the exact URL from Admin → System → Scheduler.</p>
+<h4>cPanel</h4>
+<ol class="steps">
+  <li>Open <strong>Cron Jobs</strong> in cPanel.</li>
+  <li>Under <em>Add New Cron Job</em> choose <strong>Once Per Minute (* * * * *)</strong>.</li>
+  <li>Command:
+<pre><code>curl -fsS "https://uptime.example.com/api/cron/tick?key=YOUR-SECRET" &gt;/dev/null 2&gt;&amp;1</code></pre>
+  If your host has no <code>curl</code>, use <code>wget -q -O /dev/null "https://uptime.example.com/api/cron/tick?key=YOUR-SECRET"</code>.</li>
+  <li>Click <strong>Add New Cron Job</strong>. Within two minutes Admin → System shows <em>Running</em> with the source <code>cron</code>.</li>
+</ol>
+<h4>Linux crontab (VPS)</h4>
+<p>Run <code>crontab -e</code> and add:</p>
+<pre><code>* * * * * curl -fsS -m 70 "https://uptime.example.com/api/cron/tick?key=YOUR-SECRET" &gt;/dev/null 2&gt;&amp;1</code></pre>
+<p>On a VPS the <a href="#sched-worker">worker</a> is better: it ticks every 15 seconds instead of every minute.</p>
+<h4>cron-job.org, EasyCron and other online cron services</h4>
+<ol class="steps">
+  <li>Create a free account on <a href="https://cron-job.org">cron-job.org</a> (or EasyCron, UptimeRobot-style pingers, etc.).</li>
+  <li>Create a cron job with the URL <code>https://uptime.example.com/api/cron/tick?key=YOUR-SECRET</code>.</li>
+  <li>Schedule: <strong>every 1 minute</strong>. Request method GET. Timeout: the maximum allowed (a tick takes up to 45 seconds when many monitors are due).</li>
+  <li>Turn on failure notifications if the service offers them, so you hear about it when your platform stops answering.</li>
+</ol>
+<p>Instead of putting the key in the address you can add a request header <code>Authorization: Bearer YOUR-SECRET</code>, if the service supports custom headers.</p>
+<h4>GitHub Actions</h4>
+<p>Possible, but only as a fallback: GitHub runs scheduled workflows at most every 5 minutes, often with a delay of several minutes. Store the secret as a repository secret named <code>STATUSZEN_CRON_SECRET</code> and add <code>.github/workflows/statuszen-tick.yml</code>:</p>
+<pre><code>name: Statuszen tick
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -fsS -m 70 -H "Authorization: Bearer ${{ secrets.STATUSZEN_CRON_SECRET }}" https://uptime.example.com/api/cron/tick</code></pre>
+
+<h3 id="sched-worker">Worker (every 15 seconds)</h3>
+<p>The worker is a tiny Node.js script (<code>scripts/worker.mjs</code>) that calls the cron URL of the running app every 15 seconds. It needs the app to be running and the same secret.</p>
+<pre><code>CRON_SECRET=YOUR-SECRET npm run worker</code></pre>
+<table>
+  <tr><th>Variable</th><th>Meaning</th></tr>
+  <tr><td><code>CRON_SECRET</code></td><td>Required. The same value the app uses (environment variable) or the secret shown in Admin → System.</td></tr>
+  <tr><td><code>WORKER_URL</code></td><td>Address of the app. Default: <code>SITE_URL</code>, else <code>http://localhost:$PORT</code>.</td></tr>
+  <tr><td><code>PORT</code></td><td>App port used for the default address (default 3000).</td></tr>
+  <tr><td><code>WORKER_INTERVAL_SEC</code></td><td>Seconds between ticks (default 15, minimum 5).</td></tr>
+</table>
+<p>The worker also reads <code>.env</code>, <code>.env.local</code> and <code>.env.production</code> in the current folder. It logs a line only when something happened (checks, downs, recoveries, alerts). A <code>401</code> in its log means the secret doesn't match.</p>
+<ul>
+  <li><strong>PM2:</strong> <code>pm2 start ecosystem.config.cjs</code> starts the worker as <code>statuszen-worker</code> next to the app. See the <a href="#install-vps">VPS guide</a> for setting <code>CRON_SECRET</code>. Logs: <code>pm2 logs statuszen-worker</code>.</li>
+  <li><strong>Docker:</strong> the <code>worker</code> service in <code>docker-compose.yml</code> runs it with <code>WORKER_URL=http://app:3000</code>. Logs: <code>docker compose logs -f worker</code>.</li>
+  <li><strong>systemd:</strong> create a service with <code>ExecStart=/usr/bin/node /var/www/statuszen/scripts/worker.mjs</code>, <code>WorkingDirectory=/var/www/statuszen</code>, <code>Environment=CRON_SECRET=…</code> and <code>Restart=always</code>.</li>
+</ul>
+<div class="note"><strong>30-second check intervals need the worker.</strong> With a cron job every minute, a monitor set to 30 seconds is checked about once a minute.</div>
+
+<h3 id="sched-vercel">Vercel &amp; serverless hosting</h3>
+<ul>
+  <li><strong>Vercel Hobby (free)</strong> cron jobs run at most <strong>once a day</strong>, which is useless for monitoring. Use an external service such as <a href="https://cron-job.org">cron-job.org</a> to open the cron URL every minute (see above). Set <code>CRON_SECRET</code> in Vercel's environment variables and use the same value in the URL.</li>
+  <li><strong>Vercel Pro</strong> supports per-minute cron jobs. Add a <code>vercel.json</code> next to <code>package.json</code>:
+<pre><code>{
+  "crons": [{ "path": "/api/cron/tick", "schedule": "* * * * *" }]
+}</code></pre>
+  When <code>CRON_SECRET</code> is set in the project, Vercel sends it automatically as <code>Authorization: Bearer …</code>, which Statuszen accepts.</li>
+  <li><strong>Time limits:</strong> a tick started by the cron URL uses a time budget of 45 seconds and the route allows up to 60 seconds, which fits the default function limit. Monitors that don't fit in one tick are “deferred” and checked by the next one. Lazy ticks use 8 seconds.</li>
+  <li>The worker can't run on serverless platforms. Railway, Render and Fly.io can run it as a second, always-on service.</li>
+</ul>
+
+<h3 id="sched-which">Which one should I use?</h3>
+<table>
+  <tr><th>Hosting</th><th>Recommended</th></tr>
+  <tr><td>VPS with PM2</td><td>Worker (already in <code>ecosystem.config.cjs</code>). Optionally a crontab entry as a backup.</td></tr>
+  <tr><td>Docker</td><td>The <code>worker</code> service in <code>docker-compose.yml</code>.</td></tr>
+  <tr><td>cPanel / Plesk / shared hosting</td><td>Cron URL every minute from the hosting panel. Plans faster than 1 minute make no sense here; set the plans' shortest interval to 60 seconds.</td></tr>
+  <tr><td>Vercel</td><td>External cron service every minute (Hobby) or Vercel Cron (Pro).</td></tr>
+  <tr><td>Local testing</td><td>Lazy mode, or <code>npm run worker</code>.</td></tr>
+</table>
+<p>To check the result at any time, open <strong>Admin → System → Scheduler</strong>: <em>Running</em> means a tick finished in the last 3 minutes, and <em>Overdue monitors</em> should be 0.</p>
+
+<!-- ───────────────────────────── Admin ───────────────────────────── -->
+<h2 id="admin">Admin panel</h2>
+<p>Open <code>/admin</code> while signed in as an administrator. The menu has Dashboard, Users, Monitors, Plans, Payments, Pages, Blog, Languages, Messages, Settings and System. Administrators also have a customer dashboard (<code>/dashboard</code>) for their own monitors and status pages, without plan limits.</p>
+
+<h3 id="admin-dashboard">Dashboard</h3>
+<p>Shows the number of users (and new users in the last 30 days), active paid plans, revenue this month and the number of checks in the last 30 days, a chart of checks per day for the last 14 days, the <em>Finish setting up</em> checklist, customer monitors that are <strong>down right now</strong>, the newest users and the latest payments.</p>
+
+<h3 id="admin-users">Users</h3>
+<p>Search and filter users. Open a user to edit the name, email, role (user or admin) and status (active or banned), set a new password, or give a paid plan until a date you choose — useful for bank transfers, gifts or testing. The user page also lists their payments.</p>
+<p>Banning a user signs them out and stops all checks of their monitors (and therefore their alerts). Their data and status pages are kept; the status pages stay reachable but are no longer updated.</p>
+
+<h3 id="admin-monitors">Monitors</h3>
+<p>Every monitor on the platform with its owner, type, target, status, last check and 24-hour uptime. Filter by <em>Down</em>, <em>Up</em> or <em>Paused</em> and search by monitor name, target or owner (name or email). The header shows the totals (all, active, down). Use it to help customers, to spot abuse (for example monitors that hammer a third-party site) and to see the load on your server. Customers create and edit monitors themselves in their dashboard.</p>
+
+<h3 id="admin-plans">Plans &amp; limits</h3>
+<p>The installer creates three plans. Prices are in your currency (Settings → Payments).</p>
+<table>
+  <tr><th>Plan</th><th>Price</th><th>Monitors</th><th>Shortest interval</th><th>Status pages</th><th>Branding</th></tr>
+  <tr><td><strong>Free</strong></td><td>0</td><td>5</td><td>5 minutes (300 s)</td><td>1</td><td>Shown</td></tr>
+  <tr><td><strong>Pro</strong> <span class="tag">Recommended</span></td><td>15 / month or 150 / year</td><td>50</td><td>1 minute (60 s)</td><td>5</td><td>Removed</td></tr>
+  <tr><td><strong>Agency</strong></td><td>39 / month or 390 / year</td><td>500</td><td>30 seconds</td><td>50</td><td>Removed</td></tr>
+</table>
+<p>Each plan has these fields:</p>
+<table>
+  <tr><th>Field</th><th>Meaning</th></tr>
+  <tr><td>Name, short description</td><td>Shown on the pricing page.</td></tr>
+  <tr><td>Monthly price, yearly price</td><td>Enter the amount, e.g. <code>15.00</code>. <code>0</code> hides that billing period.</td></tr>
+  <tr><td>Monitors</td><td>How many monitors the customer can have (paused ones included). <strong>0 = unlimited.</strong></td></tr>
+  <tr><td>Status pages</td><td>How many status pages the customer can create. <strong>0 = unlimited.</strong></td></tr>
+  <tr><td>Shortest check interval (seconds)</td><td>The fastest interval customers can choose, e.g. <code>300</code> = every 5 minutes, <code>60</code> = every minute, <code>30</code> = every 30 seconds. Minimum 10; in practice the fastest choice in the dashboard is 30 seconds. This is <em>not</em> “0 = unlimited”. The scheduler also enforces it: after a downgrade, existing monitors are checked no faster than the new plan allows.</td></tr>
+  <tr><td>Features</td><td>One per line. Shown with a tick on the pricing page. <strong>Display text only</strong>: every plan can use all seven monitor types and all six alert channels. Only the limits above are enforced.</td></tr>
+  <tr><td>Remove branding</td><td>Hides the “Powered by …” line at the bottom of the customer's public status pages.</td></tr>
+  <tr><td>Recommended</td><td>Highlights the plan on the pricing page.</td></tr>
+  <tr><td>Show on pricing page</td><td>Hidden plans can still be given to users by an administrator.</td></tr>
+  <tr><td>This is the free plan</td><td>Mark exactly one plan as free. Its limits apply to every customer without an active paid plan.</td></tr>
+  <tr><td>Sort order</td><td>Lower numbers appear first.</td></tr>
+</table>
+<div class="note">The default feature lines of the Free and Pro plans (“Email and webhook alerts”, “Slack, Discord, Telegram and Teams alerts”, “SSL and domain expiry alerts”) suggest that some channels are paid-only. They are not restricted in version 1.0. Edit the feature lines so they match what you sell.</div>
+<h4>Administrators and downgrades</h4>
+<ul>
+  <li>Administrators without a paid plan have unlimited monitors and status pages, a 30-second minimum interval and no branding.</li>
+  <li>When a paid plan ends, the customer moves back to the free plan. Nothing is deleted and existing monitors keep running, but no faster than the free plan's interval. New monitors and status pages can't be added, and paused monitors can't be resumed, while the account is above the limits. The dashboard shows a notice.</li>
+</ul>
+
+<h3 id="admin-payments">Payments</h3>
+<p>Every payment from every gateway, with a filter by status. Bank transfers wait here with the customer's transaction reference: click <em>Approve</em> to activate the plan, or <em>Reject</em>. Paying again while a plan is active adds another month or year to it.</p>
+
+<h3 id="admin-pages">Pages &amp; messages</h3>
+<p>Create content pages (About, Privacy policy, Terms…) in Markdown. They are published at <code>/p/your-slug</code> and can be linked in the footer. <code>{site_name}</code> and <code>{site_email}</code> are replaced automatically. Review the default Privacy policy and Terms with your own legal details before launch. <strong>Messages</strong> lists contact-form submissions; reply by email with one click.</p>
+
+<h3 id="admin-blog">Blog</h3>
+<p>Write articles in Markdown at <strong>Admin → Blog</strong>. Each post has a title, URL slug (<code>/blog/your-slug</code>), excerpt, cover image (upload or URL), meta description and status. Leave the publish date empty to publish now, or pick a future date (UTC) to schedule the post. Published posts appear at <code>/blog</code>, in the sitemap and, the latest three, on the home page. Three starter articles are included (uptime monitoring, heartbeat monitoring, incident communication). Switch the whole blog off in Settings → General.</p>
+
+<h3 id="admin-languages">Languages</h3>
+<p>Add languages and translate the public site, status pages and the customer dashboard. See <a href="#i18n">Languages &amp; RTL</a>.</p>
+
+<h3 id="admin-settings">Settings</h3>
+<table>
+  <tr><th>Section</th><th>What you configure</th></tr>
+  <tr><td>General</td><td>Platform name, tagline, <strong>Site URL</strong>, contact email, logo (light and dark), favicon, footer text, copyright line, blog on/off.</td></tr>
+  <tr><td>Appearance</td><td>Brand colour, default theme (light/dark/follow the device), home page headline and introduction, benefits strip.</td></tr>
+  <tr><td>SEO</td><td>Home title and description, keywords, title separator, social image, Google/Bing verification, extra robots.txt rules.</td></tr>
+  <tr><td><strong>Monitoring</strong></td><td>Scheduler, private targets, data retention and status page branding. See below.</td></tr>
+  <tr><td>Payments</td><td>Currency and the four gateways.</td></tr>
+  <tr><td>Email</td><td>SMTP server for email alerts, status page subscriptions, password resets and contact-form messages.</td></tr>
+  <tr><td>Users</td><td>Open/close registration, contact page, cookie notice on your own site.</td></tr>
+  <tr><td>Advanced</td><td>Maintenance mode, analytics code, additional code (chat widgets).</td></tr>
+</table>
+<h4 id="admin-monitoring-settings">Settings → Monitoring</h4>
+<table>
+  <tr><th>Setting</th><th>Default</th><th>Meaning</th></tr>
+  <tr><td>Run checks on visits (no cron needed)</td><td>On</td><td><a href="#sched-lazy">Lazy mode</a>. Keep it on unless you have set up the cron URL or the worker; it does no harm as a backup.</td></tr>
+  <tr><td>Keep individual check results (days)</td><td>30</td><td>Single check results (used for response-time charts and the “Recent checks” list) older than this are deleted once a day. Daily uptime summaries are kept for good, so uptime bars and percentages are not affected. Lower it on small databases.</td></tr>
+  <tr><td>Allow private network addresses</td><td>Off</td><td>Lets monitors and webhook alerts reach <code>localhost</code> and internal addresses (10.x, 172.16–31.x, 192.168.x, IPv6 private ranges, <code>.local</code>, <code>.internal</code>). <strong>Only turn this on when you are the only user of the installation</strong> (for example a company monitoring its own intranet). On a public SaaS it would let customers scan your server's network.</td></tr>
+  <tr><td>Branding text</td><td>Powered by Statuszen</td><td>Shown at the bottom of public status pages. Change it to your brand. Leave it empty to never show branding. Plans with <em>Remove branding</em> never show it.</td></tr>
+  <tr><td>Branding link</td><td>(empty)</td><td>Where the branding link goes. Empty = your Site URL. Free status pages become free advertising for your platform.</td></tr>
+  <tr><td>Status page on your home page</td><td>(empty)</td><td>The address (slug) of one of <em>your own</em> public status pages, previewed on the public home page as a live demo. Empty = none.</td></tr>
+</table>
+<div class="note">Maintenance mode only hides your public marketing pages. The customer dashboard, status pages, heartbeat pings, the cron URL and all checks keep working.</div>
+
+<h3 id="admin-system">System &amp; scheduler</h3>
+<p>The <strong>Scheduler</strong> card is the health check of your monitoring service:</p>
+<table>
+  <tr><th>Item</th><th>Meaning</th></tr>
+  <tr><td>Badge</td><td><em>Running</em>: a tick finished in the last 3 minutes. <em>Stalled</em>: ticks used to run but stopped. <em>Never ran</em>: no tick yet.</td></tr>
+  <tr><td>Last run</td><td>Time and source of the last tick: <code>cron</code>, <code>worker</code>, <code>lazy</code> or <code>manual</code>.</td></tr>
+  <tr><td>Last result</td><td>Monitors checked, went down, recovered, alerts sent and duration — or “Skipped” when another tick was running.</td></tr>
+  <tr><td>Overdue monitors</td><td>Active monitors (heartbeats excluded) whose check is more than 2 minutes late. Should be 0. A growing number means ticks are too rare or too slow.</td></tr>
+  <tr><td>Lazy mode</td><td>Whether <em>Run checks on visits</em> is on.</td></tr>
+  <tr><td>Run checks now</td><td>Runs one tick immediately (25-second budget) and shows the result.</td></tr>
+  <tr><td>Cron URL, cron line</td><td>The complete URL with the secret, a Copy button and a ready-made crontab line.</td></tr>
+  <tr><td>New secret</td><td>Replaces the stored secret (hidden when <code>CRON_SECRET</code> is set).</td></tr>
+</table>
+<p>The other cards show the version, Node.js, database type, storage folder, demo mode and email status, the applied database migrations, tools to reload settings and delete expired sessions, and an <strong>Email test</strong>.</p>
+
+<!-- ───────────────────────────── Customer guide ───────────────────────────── -->
+<h2 id="customer">Customer guide</h2>
+<p>This chapter explains the customer dashboard (<code>/dashboard</code>). You can copy parts of it into your own help pages or blog. The menu has Overview, Monitors, Incidents, Status pages, Alert channels and Maintenance. The overview shows the overall state, monitors that are down, open incidents, plan usage (monitors, status pages, fastest interval) and a three-step getting-started guide for new accounts.</p>
+
+<h3 id="c-monitors">Monitor types</h3>
+<p>Click <strong>Add monitor</strong> and pick a type. Every monitor has a <em>Name</em> (shown in alerts and on status pages; empty = the address), a <a href="#c-schedule">schedule</a>, the <a href="#c-channels">alert channels</a> to notify (all active channels are selected for new monitors) and a <em>Paused</em> switch. Paused monitors are not checked and send no alerts.</p>
+
+<div class="box">
+<h4>1. Website (HTTP) <span class="muted">— a website or API answers with the expected status code</span></h4>
+<table>
+  <tr><th>Field</th><th>Default</th><th>Details</th></tr>
+  <tr><td>URL</td><td>—</td><td>Full address starting with <code>http://</code> or <code>https://</code>. Credentials in the URL (<code>https://user:pass@host/</code>) are sent as HTTP Basic authentication.</td></tr>
+  <tr><td>Method</td><td>GET</td><td>GET, HEAD, POST, PUT, PATCH, DELETE or OPTIONS.</td></tr>
+  <tr><td>Accepted status codes</td><td><code>200-299</code></td><td>Ranges and lists, e.g. <code>200-299,301</code> or <code>401</code> for a login-protected API.</td></tr>
+  <tr><td>Timeout (seconds)</td><td>15</td><td>1–60.</td></tr>
+  <tr><td>Follow redirects</td><td>On</td><td>Up to 10 redirects; every hop is checked against the private-address rules. Off: a 301/302 is judged by the accepted status codes.</td></tr>
+  <tr><td>Maximum response time (ms)</td><td>0 (off)</td><td>Slower responses count as down, e.g. 3000.</td></tr>
+  <tr><td>Request headers</td><td>—</td><td>Up to 20, e.g. <code>Authorization: Bearer …</code>.</td></tr>
+  <tr><td>Request body</td><td>—</td><td>For POST, PUT, PATCH and DELETE, up to 10,000 characters, sent as is. Add a <code>Content-Type</code> header if your API needs one.</td></tr>
+</table>
+<p><strong>Down when:</strong> the connection fails or times out, DNS lookup fails, the SSL certificate is invalid (expired, self-signed, wrong host), the status code isn't accepted, the response is slower than the maximum, or the target resolves to a private address. Requests use the User-Agent <code>Mozilla/5.0 (compatible; Statuszen-Monitor/1.0; uptime check)</code>. Every check opens a fresh connection, so the response time includes DNS, connect, TLS and the first byte.</p>
+</div>
+
+<div class="box">
+<h4>2. Keyword <span class="muted">— a page contains (or doesn't contain) a word</span></h4>
+<p>All HTTP fields, plus:</p>
+<ul>
+  <li><strong>Keyword</strong> – text to look for in the response body (the first 2 MB are read).</li>
+  <li><strong>Alert when the keyword is</strong> – <em>Missing</em> (default; e.g. “Add to cart” must be there) or <em>Found</em> (e.g. “Database error” must not appear).</li>
+  <li><strong>Case-sensitive</strong> – off by default.</li>
+</ul>
+<p><strong>Down when:</strong> anything that makes an HTTP monitor down, or the keyword rule fails. Don't use the HEAD method: it has no body.</p>
+</div>
+
+<div class="box">
+<h4>3. TCP port <span class="muted">— a server accepts connections, e.g. a database or mail server</span></h4>
+<ul>
+  <li><strong>Host</strong> – hostname or IP address, without <code>http://</code>.</li>
+  <li><strong>Port</strong> – 1–65535 (default 443). <strong>Timeout</strong> – 1–60 seconds (default 10).</li>
+</ul>
+<p><strong>Down when:</strong> the connection is refused, times out, the host is unreachable or DNS fails. Nothing is sent after connecting.</p>
+</div>
+
+<div class="box">
+<h4>4. SSL certificate <span class="muted">— warn before a certificate expires or breaks</span></h4>
+<ul>
+  <li><strong>Host</strong> and <strong>Port</strong> (default 443). The handshake uses SNI, so shared hosting and CDNs work.</li>
+  <li><strong>Warn before expiry (days)</strong> – 1–120, default 14.</li>
+</ul>
+<p><strong>Down when:</strong> the certificate has expired, is not valid yet, doesn't match the host name, isn't trusted (self-signed, incomplete chain, unknown issuer), or the server doesn't speak TLS. A certificate that expires <em>soon</em> keeps the monitor up but sends an <strong>SSL expiry warning</strong>, at most once every 24 hours, until it is renewed. The dashboard shows the days left. Timeout: 10 seconds.</p>
+</div>
+
+<div class="box">
+<h4>5. Domain expiry <span class="muted">— warn before a domain registration expires</span></h4>
+<ul>
+  <li><strong>Domain</strong> – the registered domain, e.g. <code>example.com</code> (<code>www.</code> is removed; for a subdomain the parent domain is looked up).</li>
+  <li><strong>Warn before expiry (days)</strong> – 1–365, default 30.</li>
+</ul>
+<p>The expiry date comes from <strong>RDAP</strong>, the modern successor of WHOIS, using the registry listed in IANA's directory (with rdap.org as a fallback). <strong>Down only when</strong> the domain has expired or is not registered. Registry outages and top-level domains without RDAP (some country domains) never mark it down; the expiry then shows “Not known yet”. A <strong>domain expiry warning</strong> is sent at most once every 24 hours inside the warning period.</p>
+<div class="note">Registration data is looked up <strong>at most every 6 hours</strong>, whatever interval is chosen, because registries rate-limit RDAP. <em>Check now</em> is not available for domain monitors.</div>
+</div>
+
+<div class="box">
+<h4>6. DNS record <span class="muted">— a record resolves, optionally to an expected value</span></h4>
+<ul>
+  <li><strong>Host</strong> – a hostname (not an IP address).</li>
+  <li><strong>Record type</strong> – A, AAAA, CNAME, MX, TXT or NS.</li>
+  <li><strong>Expected value</strong> – optional. One of the answers must contain this text (not case-sensitive), e.g. an IP address, <code>mail.example.com</code> or <code>v=spf1</code>.</li>
+</ul>
+<p>Queries go to the public resolvers <code>1.1.1.1</code> and <code>8.8.8.8</code>, so results don't depend on your server's DNS settings. <strong>Down when:</strong> the domain doesn't exist, there are no records of that type, the name servers fail or don't answer within 10 seconds, or no answer contains the expected value. MX answers look like <code>10 mail.example.com</code>.</p>
+</div>
+
+<div class="box">
+<h4>7. Cron / heartbeat <span class="muted">— your job pings a URL; a missed ping is an alert</span></h4>
+<p>Heartbeat monitors don't check anything themselves. The job calls a secret URL after each run. Fields: <strong>Expect a ping every</strong> (the job's schedule) and <strong>Grace period</strong> (none, 1, 5, 10, 15, 30 minutes, 1, 2 or 6 hours, 1 day; default 5 minutes). See <a href="#c-heartbeat">Heartbeat monitoring</a>.</p>
+<p><strong>Down when:</strong> no ping arrives within the expected period plus the grace period, or the job calls the <code>/fail</code> URL. Heartbeats go down immediately, without confirmations.</p>
+</div>
+
+<h3 id="c-schedule">Intervals, confirmations and what happens when a monitor fails</h3>
+<p><strong>Check every</strong>: 30 seconds, 1, 2, 5, 10, 15 or 30 minutes, 1 hour, 6 hours or 24 hours. Choices faster than the plan allows are marked “(upgrade)”. Defaults for new monitors: 1 minute for HTTP, keyword and TCP; 5 minutes for DNS; 1 hour for SSL; 24 hours for domains (never faster than the plan's minimum). The real frequency also depends on the <a href="#scheduling">scheduler</a>: with a cron job every minute, nothing is checked more often than once a minute. Each next check gets a small random delay (up to 10 % of the interval, at most 60 seconds), so monitors created together don't all run at the same second.</p>
+<p><strong>Confirm before alerting</strong>: <em>Alert on the first failure</em>, or after 2–5 failures in a row (default 2). After an unconfirmed failure, the monitor is checked again after 30 seconds (or its interval, if shorter) instead of waiting for the next regular check. So with 2 confirmations, a real outage is reported about 30–60 seconds after the first failed check.</p>
+<p>When a monitor is confirmed <strong>down</strong>:</p>
+<ol class="steps">
+  <li>Its status changes to <em>Down</em> and the reason is stored (“Expected 200-299, got 503”, “Timed out after 15 s”, “Connection refused”, “SSL certificate error: …”).</li>
+  <li>An <a href="#c-incidents">automatic incident</a> opens and appears on every status page that shows the monitor; subscribers are emailed.</li>
+  <li>A <strong>Down alert</strong> goes to the monitor's alert channels.</li>
+  <li>While it stays down, a <strong>Still down reminder</strong> is sent once an hour.</li>
+</ol>
+<p>On the first successful check it is <strong>Up</strong> again: a <strong>Recovery alert</strong> with the downtime is sent, the incident is resolved and subscribers are told. Every attempt is listed in the monitor's <em>Alert log</em> (kept for 90 days).</p>
+<p>The monitor page also shows uptime for 24 hours, 7, 30 and 90 days, response-time charts (24 hours or 7 days), 90 daily uptime bars, incidents, recent checks or pings, SSL/domain expiry, and <a href="#c-badges">badges</a>. The monitor list supports search, filters by status and type, bulk pause/resume and <em>Duplicate</em> (the copy starts paused).</p>
+
+<h3 id="c-test">Test now and Check now</h3>
+<ul>
+  <li><strong>Test now</strong> (in the monitor form) runs one check with the values in the form, before saving. Nothing is stored and no alert is sent. Use it to tune status codes, keywords and headers. Limit: 12 tests per minute.</li>
+  <li><strong>Check now</strong> (on a saved monitor's page) runs a real check immediately and records it like a scheduled check, so it can change the status and send alerts. Not available for paused, heartbeat and domain monitors. Limit: 6 per minute.</li>
+</ul>
+
+<h3 id="c-heartbeat">Heartbeat (cron job) monitoring</h3>
+<p>After saving a heartbeat monitor, its page shows the secret <strong>ping URL</strong> and ready-made snippets:</p>
+<pre><code>https://uptime.example.com/api/ping/aB3dE5fG7hJ9kL2mN4pQ6rS8</code></pre>
+<table>
+  <tr><th>Call</th><th>Meaning</th></tr>
+  <tr><td><code>…/api/ping/&lt;token&gt;</code></td><td>The job finished successfully. A down monitor recovers immediately.</td></tr>
+  <tr><td><code>…/api/ping/&lt;token&gt;/start</code></td><td>The job started. The run time is measured until the next success ping (shown in the “Job run time” chart).</td></tr>
+  <tr><td><code>…/api/ping/&lt;token&gt;/fail</code></td><td>The job failed. The monitor goes down immediately and alerts are sent.</td></tr>
+  <tr><td><code>?ms=1234</code></td><td>Optional: report the run time yourself, in milliseconds. <code>?state=start</code> or <code>?state=fail</code> work instead of the path too.</td></tr>
+</table>
+<p>GET, POST and HEAD all work. The answer is plain text <code>OK</code> (or <code>paused</code> for a paused monitor), so <code>curl -fsS</code> stays quiet in a crontab. Unknown tokens answer <code>404</code>; more than 60 pings per minute answer <code>429</code>. Anyone with the URL can report runs, so keep it private.</p>
+<p><strong>Timing:</strong> the monitor expects the next ping within <em>expected period + grace period</em> after the last one. A new or resumed heartbeat gets a full period from the moment it was saved. Missed pings are detected by the <a href="#scheduling">scheduler</a>: if no ticks run, nobody notices a missed ping.</p>
+<div class="note">Choose a grace period longer than the job's normal run time plus its normal delay. Example: a backup at 02:00 that takes up to 40 minutes, pinging when done: <em>every 24 hours</em>, grace <em>1 hour</em>.</div>
+
+<h4>Crontab</h4>
+<pre><code># Run the job every hour, then ping when it succeeds
+0 * * * * /path/to/job.sh &amp;&amp; curl -fsS -m 10 --retry 3 https://uptime.example.com/api/ping/TOKEN &gt; /dev/null</code></pre>
+<h4>Bash script with start and failure reporting</h4>
+<pre><code>URL=https://uptime.example.com/api/ping/TOKEN
+curl -fsS -m 10 --retry 3 "$URL/start" &gt; /dev/null
+if /path/to/job.sh; then
+  curl -fsS -m 10 --retry 3 "$URL" &gt; /dev/null
+else
+  curl -fsS -m 10 --retry 3 "$URL/fail" &gt; /dev/null
+fi</code></pre>
+<h4>systemd timer</h4>
+<p>In the service unit that the timer starts (e.g. <code>/etc/systemd/system/backup.service</code>):</p>
+<pre><code>[Service]
+Type=oneshot
+ExecStartPre=-/usr/bin/curl -fsS -m 10 --retry 3 https://uptime.example.com/api/ping/TOKEN/start
+ExecStart=/usr/local/bin/backup.sh
+ExecStartPost=/usr/bin/curl -fsS -m 10 --retry 3 https://uptime.example.com/api/ping/TOKEN
+ExecStopPost=/bin/sh -c 'if [ "$SERVICE_RESULT" != "success" ]; then /usr/bin/curl -fsS -m 10 https://uptime.example.com/api/ping/TOKEN/fail; fi'</code></pre>
+<h4>Windows Task Scheduler / PowerShell</h4>
+<p>Save as <code>C:\Jobs\backup.ps1</code>:</p>
+<pre><code>$Ping = "https://uptime.example.com/api/ping/TOKEN"
+try {
+  Invoke-RestMethod -Uri "$Ping/start" -TimeoutSec 10 | Out-Null
+  # ... your job, e.g.:
+  &amp; "C:\Jobs\backup.exe"
+  if ($LASTEXITCODE -ne 0) { throw "backup.exe exited with $LASTEXITCODE" }
+  Invoke-RestMethod -Uri $Ping -TimeoutSec 10 | Out-Null
+} catch {
+  Invoke-RestMethod -Uri "$Ping/fail" -TimeoutSec 10 | Out-Null
+}</code></pre>
+<p>In Task Scheduler create a task with the action <em>Start a program</em>: program <code>powershell.exe</code>, arguments <code>-NoProfile -ExecutionPolicy Bypass -File C:\Jobs\backup.ps1</code>.</p>
+<h4>Node.js</h4>
+<pre><code>const PING = "https://uptime.example.com/api/ping/TOKEN";
+
+try {
+  await fetch(`${PING}/start`);
+  await runJob();
+  await fetch(PING);
+} catch (err) {
+  await fetch(`${PING}/fail`, { method: "POST", body: String(err) });
+}</code></pre>
+<h4>Python</h4>
+<pre><code>import urllib.request
+
+PING = "https://uptime.example.com/api/ping/TOKEN"
+
+try:
+    urllib.request.urlopen(PING + "/start", timeout=10)
+    run_job()
+    urllib.request.urlopen(PING, timeout=10)
+except Exception:
+    urllib.request.urlopen(PING + "/fail", timeout=10)</code></pre>
+<h4>Laravel scheduler</h4>
+<pre><code>// routes/console.php (Laravel 11+) or app/Console/Kernel.php
+use Illuminate\Support\Facades\Schedule;
+
+$ping = 'https://uptime.example.com/api/ping/TOKEN';
+
+Schedule::command('backup:run')
+    -&gt;dailyAt('02:00')
+    -&gt;pingBefore("$ping/start")
+    -&gt;pingOnSuccess($ping)
+    -&gt;pingOnFailure("$ping/fail");</code></pre>
+<p>Laravel's ping methods need the Guzzle HTTP client, which Laravel installs by default.</p>
+<h4>GitHub Actions</h4>
+<pre><code>      - name: Report success to the heartbeat monitor
+        if: success()
+        run: curl -fsS -m 10 --retry 3 https://uptime.example.com/api/ping/TOKEN
+
+      - name: Report failure
+        if: failure()
+        run: curl -fsS -m 10 --retry 3 https://uptime.example.com/api/ping/TOKEN/fail</code></pre>
+
+<h3 id="c-channels">Alert channels</h3>
+<p>Open <strong>Alert channels → Add alert channel</strong>, pick a type, give the channel a name (e.g. “On-call team”) and fill in the fields. Then attach it to monitors in each monitor's <em>Alerts</em> section. Switch a channel off to pause its alerts without deleting it. <strong>Send test</strong> sends a sample alert right away (6 per minute) and shows the exact error if delivery fails.</p>
+<p>Each channel receives these events: <strong>Down</strong>, <strong>Recovery</strong> (up again, with the downtime), <strong>Still down</strong> reminder (hourly), <strong>SSL expiry warning</strong>, <strong>Domain expiry warning</strong> and <strong>Test</strong>. Alerts to all channels of a monitor are sent in parallel with an 8-second timeout each. There are no retries; failures are listed in the monitor's alert log. Alert texts are in English.</p>
+
+<div class="box">
+<h4>Email</h4>
+<p>Up to 10 addresses, separated by commas. Subjects look like <code>[Down] Website</code>, <code>[Up] Website</code>, <code>[Still down] Website</code>, <code>[SSL expiring] …</code>. The message contains the reason, the target, the time it went down (UTC) and a link to the monitor.</p>
+<p><strong>Requires SMTP</strong> in Admin → Settings → Email. Without it, sending fails with “Email is not configured on this platform”.</p>
+</div>
+
+<div class="box">
+<h4>Slack</h4>
+<ol class="steps">
+  <li>Go to <a href="https://api.slack.com/apps">api.slack.com/apps</a> → <strong>Create New App</strong> → <em>From scratch</em>. Name it (e.g. “Status alerts”) and pick your workspace.</li>
+  <li>Open <strong>Incoming Webhooks</strong> and switch <em>Activate Incoming Webhooks</em> on.</li>
+  <li>Click <strong>Add New Webhook to Workspace</strong>, choose the channel and click <em>Allow</em>.</li>
+  <li>Copy the URL (<code>https://hooks.slack.com/services/T…/B…/…</code>), paste it as <em>Incoming webhook URL</em> and click <em>Send test</em>.</li>
+</ol>
+<p>Alerts appear as a coloured message (red down, green up, orange reminder) with the monitor as a link.</p>
+</div>
+
+<div class="box">
+<h4>Discord</h4>
+<ol class="steps">
+  <li>In Discord open the channel's <strong>Edit Channel</strong> (gear icon) → <strong>Integrations</strong> → <strong>Webhooks</strong> → <strong>New Webhook</strong>. You need the <em>Manage Webhooks</em> permission.</li>
+  <li>Click the new webhook, then <strong>Copy Webhook URL</strong> (<code>https://discord.com/api/webhooks/…</code>).</li>
+  <li>Paste it in Statuszen and click <em>Send test</em>.</li>
+</ol>
+<p>Alerts are posted as an embed in the event colour, under your platform's name.</p>
+</div>
+
+<div class="box">
+<h4>Microsoft Teams</h4>
+<p>Microsoft is retiring the old “Incoming Webhook” connectors (Office 365 connectors). Use <strong>Workflows</strong>:</p>
+<ol class="steps">
+  <li>In Teams, open the channel, click <strong>…</strong> (More options) → <strong>Workflows</strong>.</li>
+  <li>Choose the template <strong>“Post to a channel when a webhook request is received”</strong>, give it a name, check the team and channel, and click <em>Add workflow</em>.</li>
+  <li>Copy the URL that is shown (it ends in <code>…logic.azure.com…</code> or <code>…powerplatform.com…</code>), paste it in Statuszen and click <em>Send test</em>.</li>
+</ol>
+<p>Workflow URLs receive an Adaptive Card with an <em>Open monitor</em> button. Other URLs (a legacy Incoming Webhook connector, if your tenant still has one) receive the classic MessageCard format.</p>
+</div>
+
+<div class="box">
+<h4>Telegram</h4>
+<ol class="steps">
+  <li>In Telegram, open <strong>@BotFather</strong>, send <code>/newbot</code>, choose a name and a username ending in <code>bot</code>. Copy the <strong>bot token</strong> (looks like <code>123456789:AA…</code>).</li>
+  <li>Start a chat with your bot (press <em>Start</em>), or add the bot to the group that should get alerts. For a channel, add the bot as an administrator.</li>
+  <li>Send any message in that chat (in a group, e.g. <code>/start@yourbot</code>).</li>
+  <li>Open <code>https://api.telegram.org/bot&lt;token&gt;/getUpdates</code> in a browser and find <code>"chat":{"id":…}</code>. Private chats have a positive number, groups a negative number, supergroups and channels start with <code>-100</code>. Public channels can also use <code>@channelname</code>.</li>
+  <li>Paste the token and the chat ID and click <em>Send test</em>.</li>
+</ol>
+<p>If <code>getUpdates</code> shows nothing, send another message and reload. Bots in groups only see commands and mentions while BotFather's <em>privacy mode</em> is on; that is enough for this step.</p>
+</div>
+
+<div class="box">
+<h4>Webhook</h4>
+<p>Statuszen sends a <code>POST</code> with a JSON body to your URL for every alert. Optionally enter a <strong>Signing secret</strong> (click <em>Generate</em>): every request then carries an HMAC-SHA256 signature. Use it to connect Zapier (“Catch Hook”), Make (“Custom webhook”), n8n, PagerDuty-style tools, SMS gateways or your own code. Any port is allowed (e.g. n8n on <code>:5678</code>), but private and local addresses are refused unless the administrator allows private targets. Redirects are not followed.</p>
+</div>
+
+<h3 id="c-webhook">Webhook payload and signature</h3>
+<pre><code>POST https://your-endpoint.example.com/statuszen
+Content-Type: application/json
+User-Agent: Statuszen-Webhook/1.0
+X-Statuszen-Event: down
+X-Statuszen-Delivery: 0b6f8c1e-2d7a-4f53-9e1a-6c2f1d8b9a40
+X-Statuszen-Signature: sha256=5d1c0e…
+
+{
+  "event": "down",
+  "monitor": { "id": 12, "name": "Website", "type": "http", "target": "https://shop.example.com" },
+  "status": "down",
+  "error": "Expected 200-299, got 503",
+  "responseMs": 412,
+  "downSince": "2026-10-17T09:30:12.000Z",
+  "downtimeSec": null,
+  "expiresAt": null,
+  "url": "https://uptime.example.com/dashboard/monitors/12",
+  "sentAt": "2026-10-17T09:30:12.512Z"
+}</code></pre>
+<table>
+  <tr><th>Field</th><th>Meaning</th></tr>
+  <tr><td><code>event</code></td><td><code>down</code>, <code>up</code>, <code>reminder</code>, <code>ssl_expiring</code>, <code>domain_expiring</code> or <code>test</code> (the test uses monitor id <code>0</code>, “Example monitor”).</td></tr>
+  <tr><td><code>monitor</code></td><td><code>id</code>, <code>name</code>, <code>type</code> (<code>http</code>, <code>keyword</code>, <code>tcp</code>, <code>ssl</code>, <code>domain</code>, <code>dns</code>, <code>heartbeat</code>) and <code>target</code> (URL, <code>host:port</code>, domain, <code>A example.com</code>, or “Heartbeat”).</td></tr>
+  <tr><td><code>status</code></td><td><code>up</code>, <code>down</code>, <code>pending</code>, <code>paused</code> or <code>maintenance</code>.</td></tr>
+  <tr><td><code>error</code></td><td>The failure reason for <code>down</code> and <code>reminder</code>, otherwise <code>null</code>.</td></tr>
+  <tr><td><code>responseMs</code></td><td>Response time of the check that triggered the alert, or <code>null</code>.</td></tr>
+  <tr><td><code>downSince</code>, <code>downtimeSec</code></td><td>When the monitor went down (ISO, UTC); seconds of downtime for <code>up</code>.</td></tr>
+  <tr><td><code>expiresAt</code></td><td>Expiry date for <code>ssl_expiring</code> and <code>domain_expiring</code>.</td></tr>
+  <tr><td><code>url</code>, <code>sentAt</code></td><td>Link to the monitor in the dashboard; time of sending.</td></tr>
+</table>
+<p>Reply with any 2xx status within 8 seconds. Do slow work after replying. <code>X-Statuszen-Delivery</code> is a unique id per request.</p>
+<h4>Verifying the signature</h4>
+<p><code>X-Statuszen-Signature</code> is only sent when the channel has a signing secret. It is <code>sha256=</code> followed by the hex HMAC-SHA256 of the <strong>raw request body</strong>, keyed with the secret. Always compute it over the raw bytes, before parsing the JSON, and compare in constant time.</p>
+<p>Node.js (Express):</p>
+<pre><code>import crypto from "node:crypto";
+import express from "express";
+
+const SECRET = process.env.STATUSZEN_SECRET; // the channel's signing secret
+const app = express();
+
+app.post("/statuszen", express.raw({ type: "application/json" }), (req, res) =&gt; {
+  const expected = "sha256=" + crypto.createHmac("sha256", SECRET).update(req.body).digest("hex");
+  const given = req.get("X-Statuszen-Signature") || "";
+  const valid = given.length === expected.length &amp;&amp;
+    crypto.timingSafeEqual(Buffer.from(given), Buffer.from(expected));
+  if (!valid) return res.status(401).send("Bad signature");
+
+  const alert = JSON.parse(req.body.toString("utf8"));
+  console.log(alert.event, alert.monitor.name, alert.error);
+  res.sendStatus(204);
+});
+
+app.listen(3000);</code></pre>
+<p>PHP:</p>
+<pre><code>&lt;?php
+$secret = 'YOUR-SIGNING-SECRET';
+$raw = file_get_contents('php://input');
+$expected = 'sha256=' . hash_hmac('sha256', $raw, $secret);
+$given = $_SERVER['HTTP_X_STATUSZEN_SIGNATURE'] ?? '';
+
+if (!hash_equals($expected, $given)) {
+    http_response_code(401);
+    exit('Bad signature');
+}
+
+$alert = json_decode($raw, true);
+// $alert['event'] is "down", "up", "reminder", "ssl_expiring", "domain_expiring" or "test"
+http_response_code(204);</code></pre>
+
+<h3 id="c-incidents">Incidents and updates</h3>
+<p><strong>Automatic incidents</strong> open when a monitor is confirmed down. The title is “<em>Name</em> is down”, the impact is <em>major</em> and the first update says that monitoring detected the problem. The incident page also stores the cause (error, status code, response time). When the monitor recovers, the incident is resolved with the downtime. Open an automatic incident to post updates (“Identified”, “Monitoring”…) for your customers.</p>
+<p><strong>Manual incidents</strong> (<em>Report incident</em>) are for problems the monitors don't see, e.g. failed payments for some users:</p>
+<ul>
+  <li><strong>Title</strong> (up to 200 characters), <strong>Status</strong> (Investigating, Identified, Monitoring, Resolved), <strong>Impact</strong> (No impact, Minor, Major, Critical), <strong>Affected monitors</strong> and a <strong>Message</strong> (up to 5,000 characters).</li>
+  <li>Post updates on the timeline; choose <em>Resolved</em> to close the incident. Delete removes it and its updates from all status pages.</li>
+</ul>
+<p>An incident appears on every status page that shows at least one of its monitors. Subscribers of those pages get an email for the opening, every update and the resolution. The status page banner is chosen like this: any open <em>critical</em> incident or <em>all</em> monitors down → <strong>Major outage</strong>; some monitors down or an open <em>major</em> incident → <strong>Partial outage</strong>; maintenance → <strong>Under maintenance</strong>; an open <em>minor</em> incident → <strong>Degraded performance</strong>; otherwise <strong>All systems operational</strong>.</p>
+
+<h3 id="c-maintenance">Maintenance windows</h3>
+<p><strong>Maintenance → Schedule maintenance</strong>: a title, start and end (in your time zone, up to 31 days long), the affected monitors and an optional message.</p>
+<ul>
+  <li>The window appears on status pages as <em>Upcoming maintenance</em>, then <em>Maintenance in progress</em>. Subscribers are emailed when it is scheduled, when it starts and when it ends.</li>
+  <li>During the window the affected monitors show <em>Maintenance</em>. They are still checked, but no incidents, alerts or expiry warnings are created, and failures don't count as downtime.</li>
+  <li>When the window ends, the monitors are checked immediately to learn their real state.</li>
+  <li>Edit a window, post an update, <em>Mark complete</em> to end it early, or <em>Cancel</em> it. Start and end are applied by the scheduler, so they are as precise as your <a href="#scheduling">ticks</a>.</li>
+</ul>
+
+<h3 id="c-pages">Status pages</h3>
+<p><strong>Status pages → New status page</strong>: enter a name and an address. The page is public at <code>https://uptime.example.com/s/&lt;address&gt;</code> right away and starts with all your monitors (up to 50) as components. Addresses use lowercase letters, numbers and dashes, 3–50 characters; a few words such as <code>admin</code>, <code>api</code>, <code>dashboard</code> and <code>status</code> are reserved. Each address exists once on the platform.</p>
+<table>
+  <tr><th>Section</th><th>Options</th></tr>
+  <tr><td>General</td><td>Name, address (checked for availability as you type), description (up to 500 characters), <strong>Published</strong> (off = hidden from visitors).</td></tr>
+  <tr><td>Logo</td><td>Upload a PNG, JPG, SVG or WebP up to 1 MB, or paste an image URL. Shown instead of the name.</td></tr>
+  <tr><td>Appearance</td><td>Theme (visitor's choice, light, dark), accent colour (off = platform colour), uptime history of 30, 60 or 90 days, show uptime percentages, show response times, allow email subscriptions, hide from search engines.</td></tr>
+  <tr><td>Content</td><td>Announcement banner (up to 300 characters, e.g. a planned migration) and the website URL the logo links to.</td></tr>
+  <tr><td>Components</td><td>The monitors on the page (up to 200). Give each a display name for customers (“Checkout” instead of “https://shop.example.com/cart”), put related ones in a <strong>group</strong> (e.g. “Website”, “API”), reorder, add or remove them. <em>Add all</em> adds every monitor not on the page yet.</td></tr>
+  <tr><td>Share</td><td>Public link, <a href="#c-badges">badge</a> (Markdown and HTML), <a href="#c-widget">status widget</a> snippet.</td></tr>
+  <tr><td>Subscribers</td><td>Confirmed and pending subscribers, remove, export CSV.</td></tr>
+  <tr><td>Delete page</td><td>Removes the page, its address and all subscribers. Monitors are not affected.</td></tr>
+</table>
+<p>Visitors see the overall banner, open incidents, ongoing and upcoming maintenance, each component with its state, daily uptime bars (hover a bar for uptime, downtime and incidents of that day), uptime percentage and a response-time chart, past incidents, an <strong>incident history</strong> by month (<code>/s/&lt;address&gt;/history</code>), a page per incident, and an <strong>Atom feed</strong> (<code>/s/&lt;address&gt;/feed.xml</code>, works in every RSS reader). Paused monitors show “Not monitored”, new ones “No data yet”. The page refreshes its data on every visit; changes in the dashboard are visible right after saving. Unless the owner's plan removes branding, the footer shows the <a href="#admin-monitoring-settings">branding line</a>.</p>
+<p>A page that is not <em>Published</em> answers <strong>404</strong> to visitors. Its owner (and administrators) can still open it, with a “This page is private” notice.</p>
+<div class="warn"><strong>Custom domains are not supported in version 1.0.</strong> Status pages always live on your platform's domain, at <code>/s/&lt;address&gt;</code>. A customer can't point <code>status.theircompany.com</code> at their page with a CNAME. As a workaround they can set up a simple redirect from their own subdomain to the page. Status pages also can't be shown inside an iframe on another website; use the widget, badge or JSON API instead.</div>
+
+<h3 id="c-subscribers">Subscribers</h3>
+<p>When <em>Allow email subscriptions</em> is on, visitors click <strong>Subscribe</strong> and enter their email address. Subscription uses <strong>double opt-in</strong>: Statuszen emails a confirmation link (<code>/s/&lt;address&gt;/confirm</code>), and only confirmed addresses receive updates. Unconfirmed sign-ups are forgotten after 7 days. Every update email has an unsubscribe link (<code>/s/&lt;address&gt;/unsubscribe</code>, one button click, so email link scanners can't unsubscribe people).</p>
+<ul>
+  <li>Subscribers are emailed when an incident opens, gets an update or is resolved, and when maintenance is scheduled, starts and ends — for incidents that affect monitors on their page.</li>
+  <li>An address subscribed to several pages of the same owner gets one email per update.</li>
+  <li><strong>SMTP is required.</strong> Without it, visitors see “Email updates aren't available right now”.</li>
+  <li>Limits: 5 sign-ups per 30 minutes per IP address, one confirmation email per address and page every 5 minutes, and a hidden honeypot field against bots.</li>
+  <li>The owner can remove subscribers and export them as CSV (<code>email, confirmed_at, subscribed_at</code>, UTF-8 for Excel).</li>
+</ul>
+
+<h3 id="c-badges">Badges</h3>
+<p>SVG badges in the familiar shields.io style, for READMEs and websites. They refresh every 60 seconds.</p>
+<table>
+  <tr><th>Badge</th><th>URL</th></tr>
+  <tr><td>Overall status of a status page (operational, degraded, partial outage, major outage, maintenance)</td><td class="wrap"><code>https://uptime.example.com/badge/&lt;address&gt;.svg</code></td></tr>
+  <tr><td>One monitor's status (up, down, maintenance, paused, pending)</td><td class="wrap"><code>https://uptime.example.com/badge/m/&lt;key&gt;.svg</code> — copy it from the monitor's page</td></tr>
+  <tr><td>One monitor's 30-day uptime (e.g. 99.98%)</td><td class="wrap"><code>https://uptime.example.com/badge/m/&lt;key&gt;.svg?type=uptime</code></td></tr>
+</table>
+<p>Options: <code>?style=flat-square</code> (default <code>flat</code>) and <code>?label=Your+text</code> (up to 40 characters). Markdown example:</p>
+<pre><code>[![Status](https://uptime.example.com/badge/acme.svg)](https://uptime.example.com/s/acme)</code></pre>
+<p>The monitor badge key is derived from the monitor's secret, but it does not reveal the heartbeat ping URL, so it is safe to publish. A private status page's badge shows “not found”.</p>
+
+<h3 id="c-widget">Status widget (sz.js)</h3>
+<p>A tiny script (about 5 KB, 2 KB gzipped, no dependencies) that shows a small pill with the overall status in a corner of any website. When an incident is open, a slim banner with its title and a link appears above it; the visitor can dismiss it for the session. It refreshes every 60 seconds while the tab is visible, draws inside a Shadow DOM (so the website's CSS can't break it) and never throws errors into the host page. Paste it before <code>&lt;/body&gt;</code>:</p>
+<pre><code>&lt;script async src="https://uptime.example.com/sz.js" data-page="acme" data-position="bottom-right" data-theme="auto"&gt;&lt;/script&gt;</code></pre>
+<table>
+  <tr><th>Attribute</th><th>Values</th></tr>
+  <tr><td><code>data-page</code></td><td>Required. The status page address.</td></tr>
+  <tr><td><code>data-position</code></td><td><code>bottom-left</code> (default) or <code>bottom-right</code>.</td></tr>
+  <tr><td><code>data-theme</code></td><td><code>auto</code> (default, follows the visitor's device), <code>light</code> or <code>dark</code>.</td></tr>
+  <tr><td><code>data-lang</code></td><td>Language code for the headline, e.g. <code>de</code>. The language must be active on your platform; default is the platform's default language.</td></tr>
+  <tr><td><code>data-label</code></td><td>Text of the banner link. Default “View status”.</td></tr>
+</table>
+<p>The widget only works for published pages. Websites with a Content-Security-Policy must allow your platform in <code>script-src</code> and <code>connect-src</code>.</p>
+
+<h3 id="c-api">JSON API</h3>
+<p>Every published status page has a public, read-only JSON endpoint, open to any origin (CORS), cached for 30 seconds:</p>
+<pre><code>GET https://uptime.example.com/api/status/acme
+GET https://uptime.example.com/api/status/acme?lang=de
+
+{
+  "name": "Acme",
+  "url": "https://uptime.example.com/s/acme",
+  "status": "partial_outage",
+  "headline": "Partial outage",
+  "components": [
+    { "name": "Website", "group": "Website", "status": "up", "uptime90": 99.977 },
+    { "name": "API", "group": "API", "status": "down", "uptime90": 99.81 }
+  ],
+  "activeIncidents": [
+    { "title": "API is down", "status": "investigating", "impact": "major",
+      "startedAt": "2026-10-17T09:30:12.000Z", "url": "https://uptime.example.com/s/acme/incidents/41" }
+  ],
+  "updatedAt": "2026-10-17T09:31:05.120Z"
+}</code></pre>
+<p><code>status</code> is <code>operational</code>, <code>degraded</code>, <code>partial_outage</code>, <code>major_outage</code> or <code>maintenance</code>. Component <code>status</code> is <code>up</code>, <code>down</code>, <code>pending</code>, <code>paused</code> or <code>maintenance</code>; <code>uptime90</code> is the 90-day uptime in percent (<code>null</code> without data). Unknown or private pages answer <code>404</code> with <code>{"error":"Status page not found."}</code>. There is no write API in version 1.0.</p>
+
+<!-- ───────────────────────────── Payments ───────────────────────────── -->
+<h2 id="payments">Payment gateways</h2>
+<p>Choose your <strong>currency</strong> in Settings → Payments first; it must be supported by every gateway you enable. Prices are entered per plan. Your customers see the enabled methods at checkout.</p>
+
+<h3 id="pay-stripe">Stripe (cards, Apple Pay, Google Pay – automatic renewal)</h3>
+<ol class="steps">
+  <li>In the Stripe Dashboard open <strong>Developers → API keys</strong> and copy the <em>Secret key</em> (<code>sk_live_…</code>, or <code>sk_test_…</code> for testing).</li>
+  <li>Open <strong>Developers → Webhooks → Add endpoint</strong>:
+    <ul>
+      <li>URL: <code>https://uptime.example.com/api/payments/stripe/webhook</code></li>
+      <li>Events: <code>invoice.paid</code>, <code>checkout.session.completed</code>, <code>customer.subscription.deleted</code></li>
+    </ul>
+    Copy the <em>Signing secret</em> (<code>whsec_…</code>).</li>
+  <li>In Statuszen open Settings → Payments, switch on Stripe, paste both keys and save.</li>
+</ol>
+<p>You don't have to create products or prices in Stripe; they are sent with each checkout from your plans. Customers can cancel automatic renewal from their account page and keep access until the end of the paid period.</p>
+
+<h3 id="pay-paypal">PayPal</h3>
+<ol class="steps">
+  <li>Go to <a href="https://developer.paypal.com/">developer.paypal.com</a> → <strong>Apps &amp; Credentials</strong>, create an app and copy the <em>Client ID</em> and <em>Secret</em> (Sandbox for testing, Live for real payments).</li>
+  <li>In Settings → Payments switch on PayPal, select the matching mode and paste both values.</li>
+</ol>
+<p>PayPal payments are one-off: a monthly or yearly purchase adds that period to the customer's plan.</p>
+
+<h3 id="pay-razorpay">Razorpay (India: UPI, cards, netbanking)</h3>
+<ol class="steps">
+  <li>In the Razorpay Dashboard open <strong>Account &amp; Settings → API Keys</strong> and generate a key.</li>
+  <li>Paste the <em>Key ID</em> and <em>Key secret</em> in Settings → Payments and switch Razorpay on. Set the currency to INR.</li>
+</ol>
+<p>Customers pay on a Razorpay payment page; the signature of the return request is verified before the plan is activated.</p>
+
+<h3 id="pay-offline">Bank transfer</h3>
+<p>Switch on <em>Bank transfer</em> and write your bank details in <em>Payment instructions</em>. Customers submit their transaction reference; you approve it in Admin → Payments.</p>
+
+<!-- ───────────────────────────── Email ───────────────────────────── -->
+<h2 id="email">Email (SMTP)</h2>
+<p>Email is <strong>required</strong> for email alert channels and for status page subscriptions (confirmation and update emails). It is also used for password reset links and contact-form messages. Without SMTP, email channels fail with a clear error and the subscribe form tells visitors that email updates aren't available.</p>
+<p>Enter your SMTP details in Settings → Email and switch on <em>Send emails</em>. Any provider works: your hosting mailbox, Gmail with an app password, Brevo, Mailgun, Amazon SES, Postmark… Use port 587 with SSL off (STARTTLS), or port 465 with SSL on. Send a test from Admin → System.</p>
+<p>A monitoring service sends bursts of email during outages (one per subscriber per update). Use a transactional email provider rather than a personal mailbox, a sender address on your own domain, and set up SPF and DKIM for it so alerts don't land in spam. Each update is sent to at most 5,000 subscribers, 5 at a time.</p>
+
+<!-- ───────────────────────────── i18n ───────────────────────────── -->
+<h2 id="i18n">Languages &amp; RTL</h2>
+<ol class="steps">
+  <li>Open <strong>Admin → Languages</strong> and add a language. Pick one from the list (the code, names and text direction are filled in) or enter your own, e.g. <code>pt-BR</code>.</li>
+  <li>Click <strong>Translate</strong>. Texts are grouped into <em>Interface</em> (the public site, sign-in pages, checkout, public status pages and the customer dashboard) and <em>Site texts</em> (tagline, headline, footer and SEO texts from Settings). Search, show untranslated texts only, and save page by page.</li>
+  <li>Switch the language to <strong>Active</strong>. When two or more languages are active, visitors get a language switcher in the header. Their choice is remembered in a cookie.</li>
+  <li>Choose the <strong>default language</strong> for visitors who haven't picked one.</li>
+</ol>
+<p>Anything you leave empty falls back to English, so you can translate step by step. To translate offline (or with a translation service), click <strong>Download template</strong>: you get a JSON file with every text. Translate the values, keep the keys, and upload the file with <strong>Import</strong>. <strong>Export</strong> downloads the translations you have so far. You can also change the English wording itself: open English and enter your own text.</p>
+<p>Right-to-left languages (Arabic, Hebrew, Persian, Urdu) flip the public site, status pages and the dashboard automatically. The admin panel stays in English. Version 1.0 does not include ready-made language packs.</p>
+<ul>
+  <li><strong>Status pages</strong> appear in the visitor's chosen language, or your default language. The JSON API and the widget accept <code>?lang=</code> / <code>data-lang</code>. Incident titles and messages are written by your customers, in any language.</li>
+  <li><strong>Alerts</strong> (email, Slack, Discord, Teams, Telegram, webhook) and <strong>subscriber update emails</strong> are in English. The subscription confirmation email is translated.</li>
+</ul>
+
+<!-- ───────────────────────────── SEO ───────────────────────────── -->
+<h2 id="seo">SEO</h2>
+<ul>
+  <li>The home page, pricing page, blog and content pages have titles, descriptions and Open Graph tags. Set them in Settings → SEO.</li>
+  <li><code>/sitemap.xml</code> and <code>/robots.txt</code> are generated automatically. Submit the sitemap in Google Search Console. Set the <strong>Site URL</strong> so canonical URLs and the sitemap use your domain.</li>
+  <li>Blog posts get article structured data (BlogPosting), Open Graph tags and sitemap entries.</li>
+  <li>Public status pages have their own title (“<em>Name</em> status”) and description and can be indexed, which helps customers' visitors find them when searching “<em>brand</em> status”. Customers can switch on <em>Hide from search engines</em> per page. Private pages are always <code>noindex</code>. Status pages are not listed in the sitemap.</li>
+  <li>Admin, account, dashboard, checkout and API addresses are blocked in robots.txt. Heartbeat ping answers carry <code>X-Robots-Tag: noindex</code>.</li>
+</ul>
+
+<!-- ───────────────────────────── Privacy & security ───────────────────────────── -->
+<h2 id="privacy">Privacy &amp; security</h2>
+<h4>SSRF protection</h4>
+<p>A monitoring service makes requests to addresses typed by strangers. Without protection, a customer could “monitor” <code>http://localhost:3306</code>, <code>http://192.168.1.1/admin</code> or a cloud metadata address and use your server to scan its own network. Statuszen blocks this for every check type and every webhook alert:</p>
+<ul>
+  <li>Loopback, private, link-local, carrier-grade NAT, multicast, documentation and reserved ranges are refused (IPv4 and IPv6, including IPv4-mapped forms), as are <code>localhost</code>, <code>*.local</code> and <code>*.internal</code>.</li>
+  <li>The address is checked <strong>when the connection is made</strong>, after DNS resolution, so a public name that resolves to a private IP (DNS rebinding) is blocked too. Every redirect hop is checked again.</li>
+  <li>Blocked checks fail with “Private and local addresses can't be monitored”.</li>
+</ul>
+<p>The administrator can lift the rule with <em>Settings → Monitoring → Allow private network addresses</em>. Only do this on a single-company installation where every user is trusted. Telegram alerts never use the exception.</p>
+<h4>Other protections</h4>
+<ul>
+  <li>Passwords are hashed with scrypt; sessions are HTTP-only cookies. Sign-in, registration and password reset are rate-limited (10 per 15 minutes / 5 per hour / 5 per hour per IP).</li>
+  <li>Heartbeat tokens (24 random characters), the cron secret and webhook signing secrets are compared in constant time.</li>
+  <li>The cron URL is rate-limited to 30 calls per minute per IP; ticks never overlap.</li>
+  <li>Badges are served with a restrictive Content-Security-Policy; the widget only links back to your platform.</li>
+  <li>Subscription forms use double opt-in, a honeypot and rate limits; unsubscribing needs a button click.</li>
+</ul>
+<h4>What is stored</h4>
+<ul>
+  <li><strong>Check results</strong>: time, success, status code, response time and error, per check. Deleted after the retention period (default 30 days). <strong>Daily summaries</strong> (checks, failures, downtime, response time per day) are kept for good. <strong>Alert log</strong>: kept 90 days.</li>
+  <li><strong>Subscribers</strong>: email address, confirmation time and an unsubscribe token. No IP addresses are stored; IPs are used in memory only, for rate limits.</li>
+  <li>Status page visitors get no tracking cookies. The widget stores only a “banner dismissed” flag in <code>sessionStorage</code>.</li>
+</ul>
+<p>Deleting a monitor deletes its checks, history and uptime data. Deleting a status page deletes its subscribers. Your customers are responsible for informing their subscribers; the default Privacy policy page is a starting point, not legal advice.</p>
+
+<!-- ───────────────────────────── Performance ───────────────────────────── -->
+<h2 id="performance">Performance &amp; limits</h2>
+<table>
+  <tr><th>Item</th><th>Value</th></tr>
+  <tr><td>Monitors per tick</td><td>Up to 200 due monitors, checked 10 at a time.</td></tr>
+  <tr><td>Tick time budget</td><td>45 s (cron URL and worker), 25 s (Run checks now), 8 s (lazy mode). Monitors that don't fit are “deferred” to the next tick. A check that is already running finishes, so a tick can last up to one check timeout longer.</td></tr>
+  <tr><td>Check timeouts</td><td>HTTP/keyword and TCP: as configured (1–60 s, default 15 and 10). SSL 10 s. DNS 10 s. Domain 15 s.</td></tr>
+  <tr><td>Rechecks</td><td>After an unconfirmed failure: 30 s later (or the interval, if shorter).</td></tr>
+  <tr><td>Reminders / expiry warnings</td><td>Once an hour while down / once per 24 hours.</td></tr>
+  <tr><td>Domain lookups</td><td>At most every 6 hours per domain monitor. The IANA registry list is cached for 24 hours.</td></tr>
+  <tr><td>Alerts</td><td>All channels in parallel, 8 s timeout each, no retries.</td></tr>
+  <tr><td>Retention</td><td>Single checks: 30 days (setting). Alert log: 90 days. Daily summaries: for good. Cleanup runs once a day.</td></tr>
+  <tr><td>Heartbeat pings</td><td>60 per minute per monitor.</td></tr>
+  <tr><td>Test now / Check now / Send test</td><td>12 / 6 / 6 per minute per customer.</td></tr>
+  <tr><td>Public JSON / badges</td><td>Cached 30 s / 60 s by browsers and CDNs.</td></tr>
+</table>
+<h4>Capacity</h4>
+<p>Most checks take well under a second. With 10 checks in parallel and the worker ticking every 15 seconds, a single 1–2 GB VPS handles a few thousand monitors at 1–5 minute intervals. Monitors that time out cost the most: 10 dead websites with a 15-second timeout occupy all 10 slots for 15 seconds. Watch <strong>Overdue monitors</strong> in Admin → System: if it stays above 0, ticks are too rare (use the worker), the server is too slow, or you have more monitors than one server can check — use MySQL, give the database more memory, and raise the plans' shortest interval. Every check stores one row; 1,000 monitors at 1 minute create about 1.4 million rows per day, so keep the retention period reasonable on large platforms.</p>
+<p>Rate limits use the visitor's IP address from <code>X-Forwarded-For</code>. Set <a href="#env"><code>TRUSTED_PROXY_HOPS</code></a> correctly when you use Cloudflare.</p>
+
+<!-- ───────────────────────────── Customise ───────────────────────────── -->
+<h2 id="customize">Customisation</h2>
+<h3>Branding without code</h3>
+<p>Logo, favicon, colours, texts, plans, pages, blog, status page branding and all interface texts (through Admin → Languages → English) are editable in the admin panel.</p>
+<h3>Code structure</h3>
+<table>
+  <tr><th>Path</th><th>Contents</th></tr>
+  <tr><td><code>src/app/(site)</code></td><td>Public pages: home, pricing, blog, pages, account, sign-in, checkout.</td></tr>
+  <tr><td><code>src/app/(dashboard)</code></td><td>The customer dashboard: overview, monitors, incidents, maintenance, status pages, alert channels.</td></tr>
+  <tr><td><code>src/app/admin</code></td><td>Admin panel pages and server actions (<code>actions/scheduler.ts</code>: Run checks now, New secret).</td></tr>
+  <tr><td><code>src/app/actions</code></td><td>Server actions for accounts, billing, the dashboard (<code>dashboard/*</code>) and status page subscriptions.</td></tr>
+  <tr><td><code>src/app/s/[slug]</code></td><td>Public status pages: page, history, incident pages, confirm/unsubscribe, <code>feed.xml</code>.</td></tr>
+  <tr><td><code>src/app/api/cron/tick</code></td><td>The cron URL.</td></tr>
+  <tr><td><code>src/app/api/ping/[token]</code></td><td>Heartbeat ping URLs (<code>[action]</code> for <code>/start</code> and <code>/fail</code>).</td></tr>
+  <tr><td><code>src/app/api/status/[slug]</code>, <code>src/app/badge</code></td><td>Public JSON API and SVG badges.</td></tr>
+  <tr><td><code>src/monitor/types.ts</code></td><td>The contract: monitor types and their configs, channel types, alert payload, incident statuses, status page settings. Dependency-free; shared by server, dashboard and widget.</td></tr>
+  <tr><td><code>src/monitor/normalize.ts</code></td><td>Defaults, validation and clamping of monitor, channel and status page settings.</td></tr>
+  <tr><td><code>src/lib/checks</code></td><td>The check engine: <code>http.ts</code> (HTTP and keyword), <code>tcp.ts</code>, <code>ssl.ts</code>, <code>domain.ts</code> (RDAP), <code>dns.ts</code>, <code>util.ts</code> (error texts, private-address guard), <code>index.ts</code> (<code>runCheck</code>).</td></tr>
+  <tr><td><code>src/lib/scheduler.ts</code></td><td>Ticks: lock, due monitors, concurrency, heartbeats, maintenance windows, housekeeping, cron secret.</td></tr>
+  <tr><td><code>src/lib/lazy-tick.ts</code></td><td>Lazy mode.</td></tr>
+  <tr><td><code>src/lib/monitor-state.ts</code></td><td>What happens after a check: confirmations, up/down, incidents, alerts, reminders, expiry warnings.</td></tr>
+  <tr><td><code>src/lib/heartbeat.ts</code></td><td>Heartbeat ping handling.</td></tr>
+  <tr><td><code>src/lib/alerts</code></td><td>One file per channel (<code>email</code>, <code>webhook</code>, <code>slack</code>, <code>discord</code>, <code>teams</code>, <code>telegram</code>), <code>format.ts</code> (alert texts), <code>subscribers.ts</code> (status page emails), <code>index.ts</code> (sending and logging).</td></tr>
+  <tr><td><code>src/lib/net/ssrf.ts</code></td><td>Private-address rules and the guarded DNS lookup.</td></tr>
+  <tr><td><code>src/status-widget</code></td><td>Source of <code>sz.js</code> (<code>index.ts</code>, <code>widget.css</code>); bundled by <code>scripts/build-widget.mjs</code> with a 20 KB gzip budget.</td></tr>
+  <tr><td><code>src/components/dashboard</code></td><td>Dashboard UI: monitor form, channel forms, status page builder, incident forms, heartbeat snippets, charts.</td></tr>
+  <tr><td><code>src/components/status</code></td><td>Status page components: uptime bars, incidents, subscribe form.</td></tr>
+  <tr><td><code>src/lib/db/migrations.ts</code></td><td>Database schema and default plans (migrations run automatically).</td></tr>
+  <tr><td><code>src/lib/i18n/messages.ts</code></td><td>Every interface text in English (the source for translations).</td></tr>
+  <tr><td><code>scripts/worker.mjs</code></td><td>The check worker.</td></tr>
+</table>
+<h3>Adding a monitor type</h3>
+<ol class="steps">
+  <li><strong><code>src/monitor/types.ts</code></strong> – add the name to <code>MONITOR_TYPES</code>, a config interface, and an entry in <code>ConfigByType</code>.</li>
+  <li><strong><code>src/monitor/normalize.ts</code></strong> – defaults in <code>DEFAULTS</code>, a <code>case</code> in <code>normalizeConfig</code> that validates every field, the display text in <code>monitorTarget</code>, and required fields in <code>configProblem</code>.</li>
+  <li><strong>Check</strong> – write <code>src/lib/checks/yourtype.ts</code> returning a <code>CheckResult</code> (never throw; use <code>fail()</code> from <code>util.ts</code>, and <code>lookupFor()</code> / <code>blockedLiteral()</code> for the private-address guard). Call it from the <code>switch</code> in <code>runCheck()</code> and give it a timeout in <code>checkTimeoutMs()</code> (<code>src/lib/checks/index.ts</code>).</li>
+  <li><strong>Dashboard</strong> – the fields in <code>src/components/dashboard/monitor-form.tsx</code>, an icon in <code>TYPE_ICONS</code> (<code>monitor-meta.tsx</code>), the default interval in <code>DEFAULT_INTERVAL</code> (<code>src/app/(dashboard)/dashboard/monitors/new/page.tsx</code>), and the private-target / error rules in <code>src/app/actions/dashboard/helpers.ts</code>.</li>
+  <li><strong>Messages</strong> – <code>dash.type.yourtype</code>, <code>dash.typeDesc.yourtype</code>, <code>dash.form.namePlaceholder.yourtype</code> and any new <code>dash.form.*</code> labels in <code>src/lib/i18n/messages.ts</code>.</li>
+  <li>Run <code>npm run typecheck</code>, then <code>npm run build</code> and restart.</li>
+</ol>
+<h3>Adding an alert channel</h3>
+<ol class="steps">
+  <li><code>src/monitor/types.ts</code> – add to <code>CHANNEL_TYPES</code> and <code>ChannelConfigByType</code>.</li>
+  <li><code>src/monitor/normalize.ts</code> – a <code>case</code> in <code>normalizeChannelConfig</code> and a rule in <code>channelProblem</code>.</li>
+  <li><code>src/lib/alerts/yourchannel.ts</code> – build the message with <code>describeAlert()</code> from <code>format.ts</code> and send it with <code>deliver()</code> from <code>webhook.ts</code> (it applies the SSRF rules and the timeout). Add a <code>case</code> in <code>sendAlert()</code> in <code>src/lib/alerts/index.ts</code>.</li>
+  <li>Dashboard – the fields and set-up steps in <code>src/components/dashboard/channel-forms.tsx</code>, an icon in <code>CHANNEL_ICONS</code>, and the error text in <code>channelConfigError</code> (<code>helpers.ts</code>).</li>
+  <li>Messages – <code>dash.channel.*</code>, <code>dash.channelDesc.*</code> and any <code>dash.channels.how.*</code> keys.</li>
+</ol>
+<p>While working on the widget, <code>npm run widget:build</code> rebuilds only <code>public/sz.js</code> in a second. After editing any code always run <code>npm run build</code> and restart the app <em>and</em> the worker.</p>
+
+<!-- ───────────────────────────── Demo ───────────────────────────── -->
+<h2 id="demo">Demo mode</h2>
+<p>Set <code>DEMO_MODE=true</code> to make the admin panel <strong>and</strong> the customer dashboard read-only: everything can be viewed, nothing can be saved. <em>Test now</em> and <em>Run checks now</em> still work, and the cron URL is hidden in Admin → System. With <code>ADMIN_EMAIL</code> and <code>ADMIN_PASSWORD</code> set, the sign-in page pre-fills that account for visitors, and its password and profile can't be changed.</p>
+<p>Add <code>DEMO_SEED=true</code> to fill an empty database once with sample data:</p>
+<ul>
+  <li>45 sample customers (a third of them on paid plans, one banned), payments including bank transfers waiting for approval, and contact messages.</li>
+  <li>For the first administrator: 8 monitors (website, keyword, public API, docs, SSL, domain, DNS and a “Nightly backup” heartbeat) with 90 days of history and past incidents, a planned maintenance, an email alert channel, and a public status page <strong>Northwind</strong> at <code>/s/demo</code> with three subscribers. This page is set as <em>Status page on your home page</em>.</li>
+</ul>
+<p>The sample monitors check your Site URL. When the Site URL is <code>localhost</code> or a private address, they check <code>https://example.com</code> instead, because private addresses can't be monitored.</p>
+<div class="note">Set <code>ADMIN_EMAIL</code>/<code>ADMIN_PASSWORD</code> and the Site URL (or <code>SITE_URL</code>) together with <code>DEMO_SEED</code>: the sample monitors are created for the first administrator, and seeding runs only once per database. The sample heartbeat expects a ping every 24 hours (1-hour grace). Nothing pings it, so about a day after seeding it goes <em>down</em> and the demo page shows a partial outage. To keep the demo green, ping its URL daily (copy it from the monitor's page) with a free cron service, or pause the monitor.</div>
+
+<!-- ───────────────────────────── Update ───────────────────────────── -->
+<h2 id="update">Updating to a new version</h2>
+<ol class="steps">
+  <li>Back up the <code>storage</code> folder and your database.</li>
+  <li>Replace all files <em>except</em> <code>storage</code> (and your <code>.env</code> file and your edited <code>ecosystem.config.cjs</code>, if any) with the new version.</li>
+  <li>Run <code>npm install</code> and <code>npm run build</code> (this also rebuilds <code>sz.js</code>).</li>
+  <li>Restart the app <strong>and the worker</strong>: <code>pm2 restart all</code>, <code>docker compose up -d --build</code>, or <em>Restart</em> in cPanel.</li>
+</ol>
+<p>Database changes are applied automatically the first time the new version starts. Monitors, history, status pages, subscribers, ping URLs and badge URLs are kept; customers don't need to change anything. Checks pause while the app restarts and continue with the next tick.</p>
+
+<!-- ───────────────────────────── Env ───────────────────────────── -->
+<h2 id="env">Environment variables (optional)</h2>
+<p>Not needed for a normal installation. Use them for Docker, Vercel, the worker or read-only hosting; see <code>.env.example</code>. Copy it to <code>.env.local</code> or set the variables in your hosting panel. Variables set by the hosting panel or PM2 win over <code>.env</code> files.</p>
+<table>
+  <tr><th>Variable</th><th>Purpose</th></tr>
+  <tr><td><code>PORT</code></td><td>Port to listen on (default 3000). <code>HOST</code> sets the address for <code>server.js</code> (default <code>0.0.0.0</code>).</td></tr>
+  <tr><td><code>SITE_URL</code></td><td>Public address of the platform, used when “Site URL” is empty in the admin panel. On Vercel, the production domain is used as a last fallback.</td></tr>
+  <tr><td><code>CRON_SECRET</code></td><td>Secret for the cron URL and the worker. Without it, a random secret is stored in the database and shown in Admin → System. Vercel Cron sends it automatically. <strong>Set your own when you use <code>ecosystem.config.cjs</code> or <code>docker-compose.yml</code></strong>, which otherwise use a public placeholder.</td></tr>
+  <tr><td class="wrap"><code>WORKER_URL</code>, <code>WORKER_INTERVAL_SEC</code></td><td>Worker only: address of the app (default <code>SITE_URL</code>, else <code>http://localhost:$PORT</code>) and seconds between ticks (default 15, minimum 5).</td></tr>
+  <tr><td><code>STORAGE_DIR</code></td><td>Folder for config, SQLite database and uploads.</td></tr>
+  <tr><td class="wrap"><code>DB_DRIVER</code>, <code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_NAME</code>, <code>DB_USER</code>, <code>DB_PASSWORD</code>, <code>DB_FILE</code></td><td>Database connection (overrides <code>storage/config.json</code>). <code>DB_DRIVER</code> is <code>mysql</code> or <code>sqlite</code>.</td></tr>
+  <tr><td><code>DATABASE_URL</code></td><td>Alternative to the <code>DB_*</code> variables: <code>mysql://user:password@host:3306/statuszen?ssl=true</code>.</td></tr>
+  <tr><td><code>DB_SSL=true</code></td><td>Connect with TLS (required by most cloud databases).</td></tr>
+  <tr><td><code>APP_INSTALLED=true</code></td><td>Skip the installer when the database is configured with environment variables.</td></tr>
+  <tr><td class="wrap"><code>ADMIN_EMAIL</code>, <code>ADMIN_PASSWORD</code>, <code>ADMIN_NAME</code></td><td>Create or promote an administrator on start-up (no installer needed). The password needs at least 8 characters.</td></tr>
+  <tr><td><code>TRUSTED_PROXY_HOPS</code></td><td>Number of reverse proxies in front of the app that add <code>X-Forwarded-For</code> (default 1: Nginx, Apache/Passenger on cPanel, Vercel). Use <strong>2</strong> for Cloudflare in front of Nginx, so rate limits see the real visitor IP.</td></tr>
+  <tr><td><code>DEMO_MODE=true</code></td><td>Read-only admin panel and dashboard.</td></tr>
+  <tr><td><code>DEMO_SEED=true</code></td><td>Fill an empty database with sample data (see <a href="#demo">Demo mode</a>).</td></tr>
+  <tr><td><code>NEXT_SERVER_ACTIONS_ENCRYPTION_KEY</code></td><td>Optional. Keeps form actions working across several servers or rebuilds.</td></tr>
+</table>
+
+<!-- ───────────────────────────── Troubleshooting ───────────────────────────── -->
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3>Checks don't run</h3>
+<p>Open <strong>Admin → System → Scheduler</strong> first.</p>
+<table>
+  <tr><th>What you see</th><th>Solution</th></tr>
+  <tr><td><em>Never ran</em> or <em>Stalled</em></td><td>Nothing is starting ticks. Lazy mode only runs while people use the site. Add the <a href="#sched-cron">cron URL</a> or start the <a href="#sched-worker">worker</a>. Click <em>Run checks now</em> to test that checks themselves work.</td></tr>
+  <tr><td>Cron job runs but the scheduler stays stalled</td><td>Open the cron URL in a browser. <code>401</code> = wrong secret (copy the URL again from Admin → System; after <em>New secret</em> the old URL stops working). <code>503</code> “Application is not installed” = wrong domain or the installer hasn't run. <code>429</code> = called too often from one IP. A redirect to <code>/login</code> or a cPanel page means the URL is wrong. Remove <code>&gt;/dev/null 2&gt;&amp;1</code> temporarily and read the cron email.</td></tr>
+  <tr><td>Worker log shows <code>401</code></td><td>The worker's <code>CRON_SECRET</code> doesn't match the app's. With PM2 both get the value from <code>ecosystem.config.cjs</code>; restart with <code>--update-env</code> after changing it. Without <code>CRON_SECRET</code> on the app, copy the secret shown in Admin → System.</td></tr>
+  <tr><td>Worker log shows “can't reach …”</td><td>The app isn't running, or <code>WORKER_URL</code>/<code>PORT</code> is wrong. With <code>SITE_URL</code> in a <code>.env</code> file the worker calls the public address; set <code>WORKER_URL=http://localhost:3000</code> to stay local.</td></tr>
+  <tr><td><em>Overdue monitors</em> above 0</td><td>Ticks are too rare or too slow. Use the worker instead of lazy mode; check <em>deferred</em> in the last result; see <a href="#performance">Capacity</a>.</td></tr>
+  <tr><td>30-second monitors are checked once a minute</td><td>Normal with cron or lazy mode. 30-second intervals need the worker.</td></tr>
+  <tr><td>Heartbeat never goes down although the job stopped</td><td>Missed pings are detected by ticks. Make sure the scheduler is <em>Running</em>.</td></tr>
+</table>
+
+<h3>Monitors are “down” although the site works</h3>
+<table>
+  <tr><th>Error</th><th>Cause and solution</th></tr>
+  <tr><td>“Private and local addresses can't be monitored” for <em>every</em> monitor of your own sites</td><td>Your server resolves the name to a private or loopback address (an entry in <code>/etc/hosts</code>, split-horizon DNS, a hosting panel that maps your domains to 127.0.0.1, or a site behind the same NAT). Remove the hosts entry, or — on a single-company install — allow private targets in Settings → Monitoring.</td></tr>
+  <tr><td>“Timed out after … s” or “Connection failed” for many monitors</td><td>The server can't reach the internet on that port. Shared hosts often block outgoing connections except 80/443 (TCP monitors on other ports always fail there). Ask your host or use a VPS. Also check the server's firewall (<code>ufw</code>, security groups).</td></tr>
+  <tr><td>“Host unreachable” or timeouts only for some sites</td><td>Often IPv6: the site has an AAAA record, but your server has no working IPv6 route. Fix or disable IPv6 on the server, or ask the site owner to check the AAAA record.</td></tr>
+  <tr><td>“DNS lookup failed”</td><td>The server's own DNS resolver isn't working, or the domain doesn't exist. Test with <code>nslookup example.com</code> on the server.</td></tr>
+  <tr><td>All DNS monitors fail with “DNS servers did not answer in time”</td><td>Outgoing DNS (port 53) to <code>1.1.1.1</code> and <code>8.8.8.8</code> is blocked by a firewall.</td></tr>
+  <tr><td>“SSL certificate error: unable to verify the certificate (incomplete chain)”</td><td>The site doesn't send its intermediate certificate. Browsers often hide this; other clients (apps, APIs) fail. Fix the server's certificate chain.</td></tr>
+  <tr><td>“Expected 200-299, got 403” or 429</td><td>A firewall, Cloudflare bot protection or rate limiting blocks the monitor. Allow your server's IP or the User-Agent <code>Statuszen-Monitor</code>, or add <code>403</code> to the accepted status codes.</td></tr>
+  <tr><td>Keyword “not found” although it is visible in the browser</td><td>The text is added by JavaScript (checks read the HTML the server sends), the page differs per country/cookie, or the keyword is case-sensitive.</td></tr>
+</table>
+
+<h3>False alarms</h3>
+<ul>
+  <li>Raise <em>Confirm before alerting</em> to 3 failures, and the timeout to 30 seconds for slow sites.</li>
+  <li>Don't set <em>Maximum response time</em> too close to normal response times.</li>
+  <li>Use <a href="#c-maintenance">maintenance windows</a> for planned work (deployments, backups).</li>
+  <li>If many unrelated monitors fail at the same moment, the problem is your server's network, not the targets. Monitor your monitoring server from an outside service.</li>
+</ul>
+
+<h3>Alerts and email</h3>
+<table>
+  <tr><th>Problem</th><th>Solution</th></tr>
+  <tr><td><strong>Emails don't arrive</strong> (alerts, subscriptions, password reset)</td><td>Configure SMTP, switch on <em>Send emails</em> and use Admin → System → Email test. Check the spam folder and set up SPF/DKIM for the sender domain. The monitor's alert log shows the exact SMTP error.</td></tr>
+  <tr><td>Telegram test fails</td><td>“Telegram rejected the bot token” = wrong token. “Check the chat ID” = wrong chat ID (groups are negative, supergroups and channels start with <code>-100</code>). “The bot can't write to this chat” = press <em>Start</em> in the bot chat, add the bot to the group, or make it an admin of the channel. The server must reach <code>api.telegram.org</code>.</td></tr>
+  <tr><td>Slack test fails with 403/404</td><td>The webhook was revoked or the app removed from the channel. Create a new incoming webhook and paste the new URL.</td></tr>
+  <tr><td>Discord test fails</td><td>401/404: the webhook was deleted; copy a new URL. 400: Discord refuses webhook names containing “discord”; Statuszen posts under your site name, so rename your platform if it contains that word.</td></tr>
+  <tr><td>Teams test fails</td><td>Old Office 365 connector URLs stop working as Microsoft retires them. Create a Workflow with “Post to a channel when a webhook request is received” and use its URL.</td></tr>
+  <tr><td>Webhook: “Private and local addresses can't be used”</td><td>The URL points at your own network. Use a public address, or allow private targets on a single-company install.</td></tr>
+  <tr><td>Webhook: “The endpoint answered HTTP 301/302”</td><td>Redirects are not followed. Use the final <code>https://</code> address.</td></tr>
+  <tr><td>Signature doesn't match</td><td>Compute the HMAC over the <em>raw</em> body before parsing it, with the channel's current secret, and compare with the whole header including <code>sha256=</code>.</td></tr>
+  <tr><td>Links in alerts or emails point to <code>localhost:3000</code></td><td>Set the Site URL in Settings → General.</td></tr>
+</table>
+
+<h3>Status pages, badges and widget</h3>
+<table>
+  <tr><th>Problem</th><th>Solution</th></tr>
+  <tr><td>Status page shows 404</td><td>The page is not <em>Published</em> (private pages are 404 for everyone except the owner and administrators), the address was changed, or the page was deleted.</td></tr>
+  <tr><td>Badge shows “not found”</td><td>Same as above, or the monitor was deleted. Copy the badge URL again.</td></tr>
+  <tr><td>Widget doesn't appear</td><td><code>/sz.js</code> returns 404 (run <code>npm run build</code>), the page is private, <code>data-page</code> is wrong, or the website's Content-Security-Policy blocks your domain in <code>script-src</code>/<code>connect-src</code>. Plain <code>http://</code> platforms are blocked on HTTPS websites.</td></tr>
+  <tr><td>Subscribe form says email isn't available</td><td>SMTP is not configured.</td></tr>
+  <tr><td>Uploaded status page logo disappears</td><td>The <code>storage</code> folder must be writable and kept across updates. On Vercel use an image URL.</td></tr>
+</table>
+
+<h3>Installation and server</h3>
+<table>
+  <tr><th>Problem</th><th>Solution</th></tr>
+  <tr><td>Blank page or “502 Bad Gateway”</td><td>The app isn't running. Check that <code>npm run build</code> finished, then restart (cPanel: <em>Restart</em>; VPS: <code>pm2 restart statuszen</code>; logs: <code>pm2 logs statuszen</code>).</td></tr>
+  <tr><td><code>/sz.js</code> returns 404</td><td><code>sz.js</code> is created by <code>npm run build</code>. Run it again (look for the <code>[widget] public/sz.js</code> line) and restart. If you build on another computer, upload <code>public/sz.js</code> together with <code>.next</code>.</td></tr>
+  <tr><td>Build fails with “[widget] build failed”</td><td>Dev dependencies (esbuild, Tailwind, TypeScript) are missing. Run <code>npm install</code> (not <code>npm install --omit=dev</code>) before building.</td></tr>
+  <tr><td>“storage folder is writable” fails</td><td>Give the app user write access: <code>chmod -R 775 storage</code> (and <code>chown</code> it to the user running Node.js).</td></tr>
+  <tr><td>Database connection fails</td><td>Check host (usually <code>localhost</code> or <code>127.0.0.1</code>), port 3306, and that the user has all privileges on the database. On cPanel the database and username include your account prefix, e.g. <code>myacc_statuszen</code>.</td></tr>
+  <tr><td>SQLite option fails</td><td>SQLite needs Node.js 22.13+. Choose a newer Node.js version in your hosting panel or use MySQL.</td></tr>
+  <tr><td>Docker build fails on a copy with <code>node_modules</code></td><td>Build from a clean copy of the package (the Dockerfile copies the whole folder, and a <code>node_modules</code> folder from Windows or macOS doesn't work in the Linux image).</td></tr>
+  <tr><td>Can't sign in after installing on HTTPS behind a proxy</td><td>Make sure the proxy sends <code>X-Forwarded-Proto</code> and <code>Host</code> headers (see the Nginx example).</td></tr>
+  <tr><td>Visitors get “Too many requests”</td><td>Behind Cloudflare + Nginx set <code>TRUSTED_PROXY_HOPS=2</code>, so each visitor has their own limit.</td></tr>
+  <tr><td>Payments are not activated</td><td>For Stripe, check the webhook URL and signing secret, and look at the webhook delivery log in Stripe. Set the correct Site URL.</td></tr>
+  <tr><td>I forgot the admin password</td><td>Use “Forgot password” (needs SMTP). Otherwise ask another administrator to set a new password in Admin → Users, or delete <code>storage/installed.lock</code>, restart, and run the installer again with the same database and the same admin email: the installer sets the new password on the existing account and keeps all data.</td></tr>
+</table>
+
+<!-- ───────────────────────────── Credits ───────────────────────────── -->
+<h2 id="credits">Credits</h2>
+<p>Statuszen uses these open-source projects. Their licences allow commercial use.</p>
+<table>
+  <tr><th>Project</th><th>Licence</th></tr>
+  <tr><td>Next.js, React, React DOM</td><td>MIT</td></tr>
+  <tr><td>Tailwind CSS, @tailwindcss/turbopack</td><td>MIT</td></tr>
+  <tr><td>Kysely, mysql2, zod, marked, undici, stripe-node, server-only</td><td>MIT</td></tr>
+  <tr><td>Nodemailer</td><td>MIT-0</td></tr>
+  <tr><td>Lucide icons (lucide-react)</td><td>ISC</td></tr>
+  <tr><td>esbuild (builds the status widget; not included in it)</td><td>MIT</td></tr>
+  <tr><td>TypeScript, ESLint (development only)</td><td>Apache 2.0, MIT</td></tr>
+  <tr><td>Bricolage Grotesque, Instrument Sans, JetBrains Mono fonts</td><td>SIL Open Font License 1.1 (licence files in <code>src/fonts</code>)</td></tr>
+</table>
+<p>The status widget <code>sz.js</code> contains only Statuszen's own code. Badges use the layout of the open shields.io format. Domain data comes from the public RDAP services of the registries (IANA bootstrap, rdap.org fallback); DNS monitors query Cloudflare (1.1.1.1) and Google (8.8.8.8) public resolvers.</p>
+
+<!-- ───────────────────────────── Changelog ───────────────────────────── -->
+<h2 id="changelog">Changelog</h2>
+<div class="card"><strong>1.0.0</strong> – 17 October 2026 – Initial release.
+<ul>
+  <li>7 monitor types: HTTP, keyword, TCP port, SSL certificate, domain expiry (RDAP), DNS record and cron/heartbeat with <code>/start</code>, <code>/fail</code> and run-time tracking.</li>
+  <li>Check engine with confirmations, quick rechecks, hourly reminders, expiry warnings and SSRF protection.</li>
+  <li>Scheduler with lazy mode, cron URL and a 15-second worker; scheduler health in Admin → System.</li>
+  <li>Alerts by email, signed webhook, Slack, Discord, Microsoft Teams (Workflows) and Telegram, with test button and alert log.</li>
+  <li>Automatic and manual incidents, maintenance windows.</li>
+  <li>Public status pages with groups, themes, 30/60/90-day uptime bars, response times, incident history, Atom feed and double opt-in subscriptions.</li>
+  <li>Status and uptime badges, the <code>sz.js</code> status widget and a public JSON API.</li>
+  <li>Plans with monitor, status page and interval limits and branding removal; Stripe, PayPal, Razorpay and bank transfer.</li>
+  <li>Admin panel, blog, content pages, multi-language with RTL, web installer for MySQL or SQLite, PM2 and Docker configurations.</li>
+</ul></div>
+
+<!-- ───────────────────────────── Support ───────────────────────────── -->
+<h2 id="support">Support</h2>
+<p>If something isn't working, please read <a href="#troubleshooting">Troubleshooting</a> first, and check Admin → System → Scheduler. For further help, contact us through the <em>Support</em> tab on the item page. Please include your hosting type, Node.js version, how you run checks (lazy, cron, worker), the monitor type and target involved, and any error message from the monitor page, the alert log, the worker log or the browser console. Support covers installation problems and bugs; customisation work is not included.</p>
+</main>
+</div>
+</body>
+</html>

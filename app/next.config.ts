@@ -29,7 +29,7 @@ const nextConfig: NextConfig = {
     return [
       // Everything except /embed/* may only be framed by this site.
       { source: "/:path((?!embed/).*)", headers: securityHeaders },
-      // Embeddable pages (testimonial wall) are meant to be shown in iframes on customer sites.
+      // Pages under /embed/ may be shown in iframes on other sites (none are shipped by default).
       {
         source: "/embed/:path*",
         headers: [

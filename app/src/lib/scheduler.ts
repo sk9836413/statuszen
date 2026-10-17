@@ -80,8 +80,16 @@ async function writeRaw(key: string, value: string | null): Promise<void> {
 }
 
 /** Secret for /api/cron/tick: env CRON_SECRET, else one generated once and stored in settings. */
+/** The example value shipped in ecosystem.config.cjs / docker-compose.yml: never accepted. */
+const PLACEHOLDER_SECRET = "change-me-to-a-long-random-string";
+
+function envSecret(): string {
+  const value = process.env.CRON_SECRET?.trim() ?? "";
+  return value && value !== PLACEHOLDER_SECRET && value.length >= 12 ? value : "";
+}
+
 export async function getCronSecret(): Promise<string> {
-  const fromEnv = process.env.CRON_SECRET?.trim();
+  const fromEnv = envSecret();
   if (fromEnv) return fromEnv;
   const stored = await readRaw(KEY.cronSecret);
   if (stored) return stored;
@@ -104,7 +112,7 @@ export async function regenerateCronSecret(): Promise<string> {
 }
 
 export function cronSecretFromEnv(): boolean {
-  return Boolean(process.env.CRON_SECRET?.trim());
+  return Boolean(envSecret());
 }
 
 /** Constant-time comparison for the cron key. */
@@ -343,6 +351,7 @@ export async function runTick({ budgetMs = 25_000, source }: { budgetMs?: number
     } catch (error) {
       console.error("[statuszen] maintenance sync failed:", error);
     }
+    if (process.env.DEMO_SEED === "true") await keepDemoHeartbeatAlive().catch(() => undefined);
 
     const rows = await db
       .selectFrom("monitors")
@@ -379,14 +388,38 @@ export async function runTick({ budgetMs = 25_000, source }: { budgetMs?: number
         return p;
       };
 
+      // After a downgrade an account can have more active monitors than its plan allows:
+      // only the oldest ones (up to the limit) are checked until the owner upgrades.
+      const allowed = new Map<number, Promise<Set<number> | null>>();
+      const allowedFor = (userId: number, max: number) => {
+        let p = allowed.get(userId);
+        if (!p) {
+          p =
+            max > 0
+              ? db
+                  .selectFrom("monitors")
+                  .select("id")
+                  .where("user_id", "=", userId)
+                  .where("is_active", "=", 1)
+                  .orderBy("id")
+                  .limit(max)
+                  .execute()
+                  .then((r) => new Set(r.map((m) => m.id)))
+              : Promise.resolve(null);
+          allowed.set(userId, p);
+        }
+        return p;
+      };
+
       const queue = [...monitors];
       const processOne = async (monitor: MonitorRecord) => {
         const owner = userById.get(monitor.userId);
         const ent = await entFor(monitor.userId);
         const interval = effectiveIntervalSec(monitor, ent);
         const at = Date.now();
-        if (!owner || owner.status !== "active") {
-          // Banned or deleted owner: don't check, look again later.
+        const withinLimit = (await allowedFor(monitor.userId, ent.maxMonitors))?.has(monitor.id) ?? true;
+        if (!owner || owner.status !== "active" || !withinLimit) {
+          // Banned or deleted owner, or over the plan's monitor limit: don't check, look again later.
           await db.updateTable("monitors").set({ next_check_at: iso(at + interval * 1000) }).where("id", "=", monitor.id).execute();
           return;
         }
@@ -461,4 +494,22 @@ export async function countStoredChecks(): Promise<number> {
   const db = await getDb();
   const row = await sql<{ n: number }>`select count(*) as n from checks`.execute(db);
   return Number(row.rows[0]?.n ?? 0);
+}
+
+/**
+ * Public demos have no real cron job behind the sample "Nightly backup" heartbeat.
+ * Pretend it pings once a night so the demo status page doesn't show a permanent outage.
+ */
+async function keepDemoHeartbeatAlive(): Promise<void> {
+  const token = await readRaw("demo_heartbeat_token");
+  if (!token) return;
+  const db = await getDb();
+  const cutoff = iso(Date.now() - 20 * 3_600_000);
+  await db
+    .updateTable("monitors")
+    .set({ last_ping_at: iso(Date.now()), status: "up", fail_streak: 0, next_check_at: iso(Date.now() + 86_400_000) })
+    .where("heartbeat_token", "=", token)
+    .where((eb) => eb.or([eb("last_ping_at", "is", null), eb("last_ping_at", "<", cutoff)]))
+    .where("status", "!=", "paused")
+    .execute();
 }

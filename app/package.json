@@ -40,7 +40,7 @@
     "tailwindcss": "^4",
     "typescript": "^5"
   },
-  "description": "Statuszen - social proof, testimonial and conversion widgets SaaS built with Next.js",
+  "description": "Statuszen - uptime monitoring, public status pages and cron monitoring SaaS built with Next.js",
   "engines": {
     "node": ">=20.9.0"
   }
