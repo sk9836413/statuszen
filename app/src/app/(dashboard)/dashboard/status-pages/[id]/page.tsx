@@ -76,7 +76,7 @@ export default async function StatusPageBuilderPage({ params, searchParams }: { 
         </ButtonLink>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_340px]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
         <Panel className="min-w-0">
           <StatusPageBuilder
             page={{
@@ -103,13 +103,15 @@ export default async function StatusPageBuilderPage({ params, searchParams }: { 
                 <p className="mb-1.5 text-sm font-medium">{t("dash.pages.badge")}</p>
                 {/* eslint-disable-next-line @next/next/no-img-element -- live SVG badge */}
                 <img src={`/badge/${page.slug}.svg`} alt={t("dash.pages.badgeAlt")} className="mb-2 h-5" />
+                <p className="mb-2 text-xs text-muted">{t("dash.pages.badgeOptions")}</p>
                 <CopyField value={`[![${page.name}](${badgeUrl})](${publicUrl})`} label={t("dash.pages.badgeMarkdown")} multiline />
                 <CopyField value={`<a href="${publicUrl}"><img src="${badgeUrl}" alt="${page.name.replace(/"/g, "&quot;")}"></a>`} label={t("dash.pages.badgeHtml")} multiline className="mt-2" />
               </div>
               <div>
                 <p className="mb-1.5 text-sm font-medium">{t("dash.pages.widget")}</p>
                 <p className="mb-2 text-xs text-muted">{t("dash.pages.widgetText")}</p>
-                <CopyField value={`<script async src="${base}/sz.js" data-page="${page.slug}"></script>`} label={t("dash.pages.widget")} multiline />
+                <CopyField value={`<script async src="${base}/sz.js" data-page="${page.slug}" data-position="bottom-right" data-theme="auto"></script>`} label={t("dash.pages.widget")} multiline />
+                <p className="mt-2 text-xs text-muted">{t("dash.pages.widgetOptions")}</p>
               </div>
             </div>
           </Panel>

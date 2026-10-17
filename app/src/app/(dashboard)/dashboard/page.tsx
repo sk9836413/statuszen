@@ -116,11 +116,11 @@ export default async function DashboardPage() {
             : "border-emerald-200 bg-emerald-50 dark:border-emerald-900 dark:bg-emerald-950/30",
         )}
       >
-        <div className="flex flex-wrap items-center gap-x-8 gap-y-5">
+        <div className="flex flex-col gap-5 md:flex-row md:items-center md:gap-8">
           <div className="flex min-w-0 flex-1 items-center gap-4">
             <span
               className={cn(
-                "grid size-14 shrink-0 place-items-center rounded-2xl text-white shadow-sm",
+                "grid size-12 shrink-0 place-items-center rounded-2xl text-white shadow-sm sm:size-14",
                 down ? "bg-red-600" : "bg-emerald-600",
               )}
             >
@@ -131,7 +131,7 @@ export default async function DashboardPage() {
                 {down ? t("dash.overview.downTitle", { n: down }) : up ? t("dash.overview.allUp") : t("dash.overview.waiting")}
               </h2>
               <p className={cn("mt-0.5 text-sm", down ? "text-red-800/80 dark:text-red-200/80" : "text-emerald-800/80 dark:text-emerald-200/80")}>
-                {down ? t("dash.overview.downText") : t("dash.overview.allUpText", { n: monitors.length })}
+                {down ? t("dash.overview.downText") : t("dash.overview.allUpText", { n: up })}
               </p>
             </div>
           </div>
@@ -151,17 +151,18 @@ export default async function DashboardPage() {
         {pending ? <p className="mt-4 text-xs text-muted">{t("dash.overview.pending", { n: pending })}</p> : null}
       </section>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_300px]">
+      <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
         <Panel
           title={t("dash.nav.monitors")}
           padded={false}
+          className="self-start"
           actions={
             <Link href="/dashboard/monitors" className="text-sm font-medium text-primary hover:underline">
               {t("dash.overview.viewAll")}
             </Link>
           }
         >
-          <MonitorRows items={sorted.slice(0, 12)} />
+          <MonitorRows items={sorted.slice(0, 12)} compact />
           {sorted.length > 12 ? (
             <div className="border-t border-line px-5 py-3 text-center">
               <Link href="/dashboard/monitors" className="text-sm font-medium text-primary hover:underline">

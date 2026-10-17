@@ -104,7 +104,7 @@ export function AdminShell({
         className="mt-2 flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-primary hover:bg-primary-soft"
       >
         <PanelsTopLeft className="size-4" aria-hidden />
-        My websites (customer dashboard)
+        My monitors (customer dashboard)
       </Link>
       <div className="mt-1 flex items-center gap-1">
         <Link href="/" target="_blank" className="flex flex-1 items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-muted hover:bg-paper hover:text-ink">

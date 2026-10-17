@@ -366,7 +366,8 @@ export function StatusPageBuilder({
         </datalist>
         {available.length ? (
           <div className="flex flex-wrap items-center gap-2">
-            <Select value={adding} onChange={(e) => setAdding(e.target.value)} aria-label={t("dash.pages.addMonitor")} className="h-9 w-auto max-w-full min-w-48">
+            <div className="w-full sm:w-64">
+            <Select value={adding} onChange={(e) => setAdding(e.target.value)} aria-label={t("dash.pages.addMonitor")} className="h-9">
               <option value="">{t("dash.pages.chooseMonitor")}</option>
               {available.map((m) => (
                 <option key={m.id} value={m.id}>
@@ -374,6 +375,7 @@ export function StatusPageBuilder({
                 </option>
               ))}
             </Select>
+            </div>
             <Button
               variant="outline"
               size="sm"

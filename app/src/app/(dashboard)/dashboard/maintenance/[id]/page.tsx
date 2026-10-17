@@ -60,7 +60,7 @@ export default async function MaintenanceWindowPage({ params }: { params: Promis
           </ActionButton>
         }
       />
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <Panel title={t("dash.maint.editTitle")}>
           {phase === "completed" ? (
             <Alert>{t("dash.maint.completedNotice")}</Alert>

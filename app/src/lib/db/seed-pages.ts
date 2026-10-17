@@ -37,7 +37,7 @@ To monitor your services we store the addresses you enter and the results of eac
 
 ## Status page subscribers
 
-Visitors can subscribe to incident updates on a status page. We store their email address only after they confirm it, and every email contains an unsubscribe link.
+Visitors can subscribe to incident updates on a status page. We send a confirmation email first; sign-ups that are not confirmed are deleted after 7 days. Every update email contains an unsubscribe link.
 
 ## Cookies
 

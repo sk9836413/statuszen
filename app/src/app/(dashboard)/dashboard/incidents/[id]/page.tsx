@@ -95,7 +95,7 @@ export default async function IncidentPage({ params, searchParams }: { params: P
         </ActionButton>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div className="space-y-6">
           {open ? (
             <Panel title={t("dash.incident.postUpdate")} description={t("dash.incident.postUpdateText")}>

@@ -41,7 +41,20 @@ const UPTIME_TEXT: Record<MonitorListItem["uptimeTone"], string> = {
 const STATUS_FILTERS = ["all", "up", "down", "paused", "pending"] as const;
 type StatusFilter = (typeof STATUS_FILTERS)[number];
 
-export function MonitorRows({ items, selectable = false, selected, onToggle }: { items: MonitorListItem[]; selectable?: boolean; selected?: Set<number>; onToggle?: (id: number) => void }) {
+export function MonitorRows({
+  items,
+  selectable = false,
+  selected,
+  onToggle,
+  compact = false,
+}: {
+  items: MonitorListItem[];
+  selectable?: boolean;
+  selected?: Set<number>;
+  onToggle?: (id: number) => void;
+  /** Narrow container (overview): fewer columns. */
+  compact?: boolean;
+}) {
   const t = useT();
   return (
     <ul className="divide-y divide-line">
@@ -65,7 +78,7 @@ export function MonitorRows({ items, selectable = false, selected, onToggle }: {
               >
                 {m.name}
               </Link>
-              <TypeBadge type={m.type} label={t(`dash.type.${m.type}` as MessageKey)} className="max-sm:hidden" />
+              <TypeBadge type={m.type} label={t(`dash.type.${m.type}` as MessageKey)} className={compact ? "max-2xl:hidden" : "max-sm:hidden"} />
             </div>
             <p className="truncate text-xs text-muted">
               <span className="sr-only">{t(`dash.status.${m.status}` as MessageKey)} · </span>
@@ -84,7 +97,7 @@ export function MonitorRows({ items, selectable = false, selected, onToggle }: {
             <p className="text-sm tabular-nums">{m.response}</p>
             <p className="text-[11px] text-muted">{t("dash.monitors.response")}</p>
           </div>
-          <div className="w-28 shrink-0 text-end max-lg:hidden">
+          <div className={cn("w-28 shrink-0 text-end", compact ? "max-xl:hidden" : "max-lg:hidden")}>
             <p className="truncate text-sm">{m.lastCheck}</p>
             <p className="text-[11px] text-muted">{t("dash.monitors.lastCheck")}</p>
           </div>
@@ -161,15 +174,18 @@ export function MonitorList({ items }: { items: MonitorListItem[] }) {
             className="h-9 w-full rounded-lg border border-line bg-surface ps-9 pe-3 text-sm placeholder:text-muted/70 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
           />
         </div>
-        <Select value={status} onChange={(e) => setStatus(e.target.value as StatusFilter)} aria-label={t("dash.monitors.filterStatus")} className="h-9 w-auto">
+        <div className="w-full sm:w-44">
+        <Select value={status} onChange={(e) => setStatus(e.target.value as StatusFilter)} aria-label={t("dash.monitors.filterStatus")} className="h-9">
           {STATUS_FILTERS.map((s) => (
             <option key={s} value={s}>
               {s === "all" ? t("dash.monitors.allStatuses") : t(`dash.status.${s}` as MessageKey)} ({counts[s]})
             </option>
           ))}
         </Select>
+        </div>
         {usedTypes.length > 1 ? (
-          <Select value={type} onChange={(e) => setType(e.target.value as MonitorType | "all")} aria-label={t("dash.monitors.filterType")} className="h-9 w-auto">
+          <div className="w-full sm:w-44">
+          <Select value={type} onChange={(e) => setType(e.target.value as MonitorType | "all")} aria-label={t("dash.monitors.filterType")} className="h-9">
             <option value="all">{t("dash.monitors.allTypes")}</option>
             {usedTypes.map((ty) => (
               <option key={ty} value={ty}>
@@ -177,6 +193,7 @@ export function MonitorList({ items }: { items: MonitorListItem[] }) {
               </option>
             ))}
           </Select>
+          </div>
         ) : null}
       </div>
 

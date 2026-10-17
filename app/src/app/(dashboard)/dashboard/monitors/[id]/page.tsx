@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, BellOff, CalendarClock, Copy, ExternalLink, LockKeyhole, Pause, Pencil, Play, RefreshCw, Siren, Trash } from "lucide-react";
 import { ActionButton, RefreshOnce } from "@/components/dashboard/actions";
+import { CopyField } from "@/components/dashboard/copy";
 import { ResponseChart, UptimeBars, UptimeLegend } from "@/components/dashboard/charts";
 import { HeartbeatSnippets } from "@/components/dashboard/heartbeat-snippets";
 import { ChannelIcon, IncidentStatusBadge, StatusDot, TypeBadge, statusTextClass } from "@/components/dashboard/monitor-meta";
@@ -17,6 +18,7 @@ import { countMonitorChecks, getChecksPage, getMonitorAlertLog, getMonitorIncide
 import { effectiveStatus } from "@/lib/dashboard-view";
 import { getLocale, getT } from "@/lib/i18n/server";
 import type { MessageKey } from "@/lib/i18n/messages";
+import { monitorBadgeKey } from "@/lib/badges";
 import { getOwnedMonitor } from "@/lib/monitors";
 import { baseUrl } from "@/lib/request";
 import { getUptimeDays, getUptimePercent } from "@/lib/uptime";
@@ -73,6 +75,8 @@ export default async function MonitorPage({
   const status = effectiveStatus(monitor);
   const isHeartbeat = monitor.type === "heartbeat";
   const pingUrl = `${base}/api/ping/${monitor.heartbeatToken}`;
+  // Public badge key: derived from (not equal to) the secret heartbeat token.
+  const badgePath = `/badge/m/${monitorBadgeKey(monitor)}.svg`;
   const href = (p: Record<string, string | number | undefined>) => {
     const sp = new URLSearchParams();
     const next = { range: range === "7d" ? "7d" : undefined, page: page > 1 ? page : undefined, ...p };
@@ -375,6 +379,25 @@ export default async function MonitorPage({
           )}
         </Panel>
       </div>
+
+      <Panel title={t("dash.detail.badges")} description={t("dash.detail.badgesText")} className="mt-6">
+        <div className="grid gap-6 md:grid-cols-2">
+          {(["status", "uptime"] as const).map((kind) => {
+            const src = `${badgePath}?type=${kind}`;
+            return (
+              <div key={kind} className="min-w-0">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <p className="text-sm font-medium">{kind === "status" ? t("dash.detail.badgeStatus") : t("dash.detail.badgeUptime")}</p>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- live SVG badge */}
+                  <img src={src} alt="" className="h-5" />
+                </div>
+                <CopyField value={`![${monitor.name.replace(/[[\]]/g, "")}](${base}${src})`} label={t("dash.pages.badgeMarkdown")} />
+                <CopyField value={`<img src="${base}${src}" alt="${monitor.name.replace(/"/g, "&quot;")}">`} label={t("dash.pages.badgeHtml")} className="mt-2" />
+              </div>
+            );
+          })}
+        </div>
+      </Panel>
 
       <Panel title={isHeartbeat ? t("dash.detail.pings") : t("dash.detail.checks")} description={t("dash.detail.checksTotal", { n: formatNumber(total, lc) })} padded={false} className="mt-6" id="checks">
         {checks.length ? (
