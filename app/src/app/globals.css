@@ -72,6 +72,58 @@
   }
 }
 
+/* Home page mockup: the "down" alert arrives, then the "recovered" one, on a loop. */
+@keyframes sz-toast-down {
+  0%,
+  6% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  12%,
+  40% {
+    opacity: 1;
+    transform: none;
+  }
+  48%,
+  88% {
+    opacity: 0.6;
+    transform: none;
+  }
+  96%,
+  100% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes sz-toast-up {
+  0%,
+  38% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  46%,
+  88% {
+    opacity: 1;
+    transform: none;
+  }
+  96%,
+  100% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+/* Draws an SVG path that has pathLength="1". */
+@keyframes sz-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
