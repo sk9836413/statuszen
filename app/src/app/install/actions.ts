@@ -113,7 +113,7 @@ export async function runInstall(formData: FormData): Promise<InstallResult> {
       site_url: site.data.site_url,
       site_email: site.data.admin_email,
       mail_from_name: site.data.site_name,
-      meta_title: `${site.data.site_name} — Free Online Image, PDF, Text & Developer Tools`,
+      meta_title: `${site.data.site_name} — Uptime Monitoring, Status Pages & Cron Monitoring`,
     });
 
     const ts = now();
