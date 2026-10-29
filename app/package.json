@@ -2,6 +2,7 @@
   "name": "statuszen",
   "version": "1.0.0",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "predev": "node scripts/build-widget.mjs",
     "dev": "next dev",

@@ -8,7 +8,7 @@ incidents, maintenance windows, email subscribers (double opt-in), an Atom feed,
 status widget (`sz.js`) and a public JSON API. Includes paid plans with limits, four payment
 gateways, a blog, multi-language/RTL and a full admin panel.
 
-The complete guide is in `documentation/index.html` (included in the download package).
+The complete guide is in [`documentation/index.html`](../documentation/index.html) (open it in a browser).
 
 ## Quick start (local)
 
