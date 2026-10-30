@@ -31,10 +31,15 @@ cPanel (Node.js) or Vercel, with MySQL/MariaDB or a zero-setup SQLite database.
 
 More screenshots are in [`marketing/final/screenshots`](marketing/final/screenshots).
 
+## Hosted version & paid installation
+
+Need Statuszen hosted for you, installed on your own server, or customised? Contact
+**[EpiFive](https://www.epifive.com/services)**.
+
 ## Quick start
 
 ```bash
-git clone https://github.com/sk9836413/statuszen.git
+git clone https://github.com/epifive/statuszen.git
 cd statuszen/app
 npm install
 npm run dev
@@ -61,9 +66,9 @@ and outbound internet access for the checks.
 ## Contributing
 
 Bug reports and pull requests are welcome — please open an
-[issue](https://github.com/sk9836413/statuszen/issues) first for larger changes. Run
+[issue](https://github.com/epifive/statuszen/issues) first for larger changes. Run
 `npm run lint` and `npm run build` in `app/` before sending a PR.
 
 ## License
 
-[MIT](LICENSE) © 2026 sk9836413
+[MIT](LICENSE) © 2026 EpiFive
