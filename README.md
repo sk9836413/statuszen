@@ -33,8 +33,12 @@ More screenshots are in [`marketing/final/screenshots`](marketing/final/screensh
 
 ## Hosted version & paid installation
 
-Need Statuszen hosted for you, installed on your own server, or customised? Contact
-**[EpiFive](https://www.epifive.com/services)**.
+Need Statuszen hosted for you, installed on your own server, or customised? See
+**[EpiFive services](https://www.epifive.com/services#custom-app-development)** (also
+[managed IT support](https://www.epifive.com/services#managed-it-support)).
+
+- Step-by-step guide: [Statuszen — open-source uptime monitor & status page](https://www.epifive.com/blog/statuszen-open-source-uptime-monitor-status-page)
+- More open-source projects: [epifive.com/open-source](https://www.epifive.com/open-source)
 
 ## Quick start
 
